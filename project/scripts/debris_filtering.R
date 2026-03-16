@@ -69,4 +69,5 @@ livecyte_pretty |>
 # 3d. Initially, we can eliminate debris from colony A, replicate 1 and colony B, replicate 2 by using the manual dataset that only includes cells and no debris.
 # 
 
-
+load("livecyte_pretty.RData")
+write.csv(livecyte_pretty, "livecyte_pretty.csv", row.names = FALSE)
