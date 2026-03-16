@@ -113,7 +113,7 @@ pca_scores <- as.data.frame(pca_result$x) |>
 pca.plot <- ggplot(pca_scores, aes(x = PC1, y = PC2, color = clone, fill = clone)) +
   geom_point(alpha = 0.1, size = 4) 
 
-# view the plot
+# View the plot
 pca.plot
 
 pca.plot +
@@ -121,3 +121,11 @@ pca.plot +
   scale_color_manual(values = c("cloneA" = "red", "cloneB" = "blue"))+
   facet_wrap(~replicate)+
   theme_classic2()
+
+
+library(readr)
+
+url <- "https://djeffares.github.io/BIO66I/data/A1-and-B2-tracking.data.2025-02-27.tsv"
+data <- read_tsv(url)
+
+write_tsv(data, "all-cell-data-FFT.filtered.2024-02-22.tsv")
