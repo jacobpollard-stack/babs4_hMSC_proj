@@ -95,6 +95,37 @@ drymass_cloneA_filtered <- ggplot(cells_livecyte, aes(x = dry.mass)) +
   facet_wrap(~ clone) +
   labs(title = "Distribution of Dry Mass After Filtering", x = "Dry Mass (pg)", y = "Count")
 drymass_cloneA_filtered
+sphericity_cloneA <- ggplot(livecyte_pretty, aes(x = sphericity)) +
+  geom_histogram(binwidth = 0.05, fill = "lightblue", color = "black") +
+  facet_wrap(~ clone) +
+  labs(title = "Distribution of Sphericity Before Filtering", x = "Sphericity", y = "Count")
+sphericity_cloneA
+sphericity_cloneA_filtered <- ggplot(cells_livecyte, aes(x = sphericity)) +
+  geom_histogram(binwidth = 0.05, fill = "lightblue", color = "black") +
+  facet_wrap(~ clone) +
+  labs(title = "Distribution of Sphericity After Filtering", x = "Sphericity", y = "Count")
+sphericity_cloneA_filtered
+length_to_width_cloneA <- ggplot(livecyte_pretty, aes(x = length.to.width.ratio)) +
+  geom_histogram(binwidth = 1, fill = "lightblue", color = "black") +
+  facet_wrap(~ clone) +
+  labs(title = "Distribution of Length to Width Ratio Before Filtering", x = "Length to Width Ratio", y = "Count")
+length_to_width_cloneA
+length_to_width_cloneA_filtered <- ggplot(cells_livecyte, aes(x = length.to.width.ratio)) +
+  geom_histogram(binwidth = 1, fill = "lightblue", color = "black") +
+  facet_wrap(~ clone) +
+  labs(title = "Distribution of Length to Width Ratio After Filtering", x = "Length to Width Ratio", y = "Count")
+length_to_width_cloneA_filtered
+#
+manual_speed_cloneA <- ggplot(manual, aes(x = mean.speed)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  facet_wrap(~ cell.line) +
+  labs(title = "Distribution of Instantaneous Velocity in Manual Dataset", x = "Instantaneous Velocity (µm/min)", y = "Count")
+manual_speed_cloneA
+filtered_livecyte_speed <- ggplot(cells_livecyte, aes(x = mean.speed)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  facet_wrap(~ clone) +
+  labs(title = "Distribution of Mean Speed in Filtered Livecyte Dataset", x = "Mean Speed (µm/min)", y = "Count")
+filtered_livecyte_speed
 #
 #
 #
