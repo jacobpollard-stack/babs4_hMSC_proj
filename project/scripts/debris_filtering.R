@@ -28,7 +28,8 @@ manual <- read_tsv("project/data/movement_morphology/manual_data.tsv",
                      cell.line = col_factor()
                    ))
 #
-# 3. Filter out debris from livecyte dataset --------------------
+# 3. Filter out debris from livecyte dataset and check quality of
+# data ----------------------------------------------------------
 
 # 3a. Collapse all the data into one nice table
 #
@@ -42,10 +43,13 @@ livecyte_pretty <- livecyte |>
     final_displacement = last(displacement), # As displacement is cumulative
     calculated_displacement = sqrt((last(position.x) - first(position.x))^2 +
                                      (last(position.y) - first(position.y))^2), # Calculate displacement from start to end position to double check that the final displacement is correctly calculated by Livecyte
-    .groups = "drop") |> # Drop groups after summarising
-  mutate(
-    lineage_rootcell = start_frame == min(start_frame),
-    left_censored = ! lineage_rootcell & start_frame > 1) # Flags objects that appear mid-experiment but are not daughter or root cells ie. debris
+    volume = mean(volume),
+    radius = mean(radius),
+    sphericity = mean(sphericity),
+    length.to.width.ratio = mean(length.to.width),
+    dry.mass = mean(dry.mass),
+    mean.speed = mean(instantaneous.velocity),
+    .groups = "drop") # Drop groups after summarising
 #
 # 3b. Check whether the final displacement calculated from the start and end positions matches the cumulative displacement provided by Livecyte. Also check whether lineage.id and tracking.id diverge at any point
 #
@@ -57,17 +61,41 @@ livecyte_pretty <- livecyte_pretty |>
 # Therefore we will perform a Wilcoxon test to see if there is a significant difference between the final displacement and the calculated displacement. If there is a significant difference, we will need to investigate further to see if there are any systematic errors in the tracking.
 wilcox.test(livecyte_pretty$final_displacement, livecyte_pretty$calculated_displacement, paired = TRUE)
 #
-livecyte_pretty |>
-  filter(!lineage_equal)
 # lineage.id and tracking.id are equal for all objects, which suggests that mitosis did not occur during the experiment. However, we can see cell division happening in the video we collected. Thus, the Livecyte data must be wrong or missing some information.
 #
-# 3c. Collapsing the manual dataset
+# 3c. Filter out debris based on common features of debris, such as:
+# - Objects that appear mid-experiment but are not daughter or root cells (left-censored objects), already accounted for
+# - Objects with very short path lengths (less than 10 micrometers)
+# - Objects with very low displacement (less than 5 micrometers)
+# - Objects with short lifespans (less than 5 frames)
+# - High aspect ratio objects, like hairs or scratches (length.to.width.ratio >= 20)
+# - Volumes outside of the normal range for cells (600-8500 cubic micrometers)
+# - Dry mass that deviates highly outside of normal range (150-2100 picograms (Anconelli et al. (2025))
 #
-
-
-
-# 3d. Initially, we can eliminate debris from colony A, replicate 1 and colony B, replicate 2 by using the manual dataset that only includes cells and no debris.
-# 
-
-load("livecyte_pretty.RData")
-write.csv(livecyte_pretty, "livecyte_pretty.csv", row.names = FALSE)
+cells_livecyte <- livecyte_pretty |>
+  filter(
+    total_path_length >= 10,
+    final_displacement >= 5,
+    n_frames >= 5,
+    length.to.width.ratio < 20,
+    600 < volume & volume < 8500,
+    150 < dry.mass & dry.mass < 2100,
+    sphericity > 0.12
+  )
+#
+# Create plots to visualise the distribution of the features before and after filtering to check that the filtering process is working as expected
+#
+drymass_cloneA <- ggplot(livecyte_pretty, aes(x = dry.mass)) +
+  geom_histogram(binwidth = 50, fill = "lightblue", color = "black") +
+  facet_wrap(~ clone) +
+  labs(title = "Distribution of Dry Mass Before Filtering", x = "Dry Mass (pg)", y = "Count")
+drymass_cloneA
+drymass_cloneA_filtered <- ggplot(cells_livecyte, aes(x = dry.mass)) +
+  geom_histogram(binwidth = 50, fill = "lightblue", color = "black") +
+  facet_wrap(~ clone) +
+  labs(title = "Distribution of Dry Mass After Filtering", x = "Dry Mass (pg)", y = "Count")
+drymass_cloneA_filtered
+#
+#
+#
+# Okay, the debris filtering is defo a good idea, but it needs to be faceted by replicate/clone!
