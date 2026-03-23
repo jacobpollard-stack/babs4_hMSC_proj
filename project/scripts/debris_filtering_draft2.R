@@ -30,13 +30,16 @@ manual <- read_tsv("project/data/movement_morphology/manual_data.tsv",
                      cell.line = col_factor()
                    ))
 #
-# 2c. Load my TID vs tracking.id dataset
-tid_mapping <- read_xlsx("project/data/movement_morphology/TID_vs_trackingid.xlsx") |> 
-  mutate(
-    clone = as.factor(clone),
-    replicate = as.factor(replicate),
-    tracking.id = as.factor(tracking.id)
-  )
+# 2c. Load my TID vs tracking.id dataset; created manually by matching the TIDs from the manual dataset to the tracking.ids from the livecyte dataset, using other parameters.
+tid_mapping <- read_csv("project/data/TID_to_trackingid.csv",
+                        col_types = cols(
+                          clone = col_factor(),
+                          replicate = col_factor(),
+                          tracking.id = col_factor(),
+                          TID = col_factor(),
+                          LID = col_factor(),
+                          cell.line = col_factor()
+                        ))
 #
 # 3. Determining what's debris and what's cell ------------------
 #
@@ -65,8 +68,12 @@ livecyte_pretty <- livecyte_pretty |>
 # 3b. Plot the data to determine distributions of common elements: we know that the manual dataset only contains cells, so we'll use that to figure out the parameters to filter the livecyte dataset.
 #
 # 3bi. Semi-join the livecyte_pretty dataset to a new dataset that contains only the tracking.ids that are present in the manual dataset
-livecyte_filtered <- livecyte_pretty |> 
-  semi_join(tid_mapping, by = c("clone", "replicate", "tracking.id"))
+livecyte_filtered <- livecyte_pretty %>%
+  filter(
+    tracking.id %in% tid_mapping$tracking.id,
+    (clone == "cloneA" & replicate == 1) |
+      (clone == "cloneB" & replicate == 2)
+  )
 #
 # 3bii. Plot the distribution of total_path_length, final_displacement, and mean_speed for the filtered dataset
 total_path_length <-ggplot(livecyte_filtered, aes(x = total_path_length)) +
@@ -118,7 +125,7 @@ livecyte_stats <- livecyte_filtered |>
     .groups = "drop"
   )
 #
-# 3cii. Obtain the 5th and 95th percentiles for total_path_length, final_displacement, and mean.speed for the livecyte dataset
+# 3cii. Obtain the 5th and 95th percentiles for total_path_length, final_displacement, and mean.speed for the whole livecyte dataset
 #
 livecyte_percentiles <- livecyte_filtered |> 
   group_by(clone, replicate) |> 
