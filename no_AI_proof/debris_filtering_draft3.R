@@ -222,4 +222,10 @@ ggplot(debris_B_all, aes(x = final_displacement)) +
   geom_histogram(binwidth = 10) +
   facet_wrap(~ replicate)
 #
+# Plot debris and cells together to check for overlap in distributions
+# A
+ggplot() +
+  geom_histogram(data = debris_A_all, aes(x = final_displacement), fill = "red", alpha = 0.5, binwidth = 10) +
+  geom_histogram(data = manual |> filter(cell.line == "A1"), aes(x = euclidean.distance), fill = "blue", alpha = 0.5, binwidth = 10)
+#
 # This is too much work for too little gain. The debris distribution is not homogenous across replicates, but it's difficult to determine how this overlaps with cells.
