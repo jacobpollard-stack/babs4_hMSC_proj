@@ -8,6 +8,7 @@
 #
 library(tidyverse)
 library(readxl)
+library(kSamples)
 #
 # 2. Load data -----------------------------------------------
 # 2a. Load the livecyte automatic dataset
@@ -41,7 +42,7 @@ tid_mapping <- read_csv("project/data/aligning/TID_to_trackingid.csv",
                         ))
 #
 # 3. Determining what's debris and what's cell:
-# The livecyte data contains a lot of debris, which overlaps heavily with cells. Thus, we will need to use the  manual data, aligned with cloneA rep1 and cloneB rep2 to determine which tracks in the livecyte data are debris and which are cells.
+# The livecyte data contains a lot of debris, which overlaps heavily with cells. Thus, we will need to use the  manual data, aligned with cloneA rep1 and cloneB rep2 to determine which tracks in the livecyte data are debris and which are cells. This will further allow us to look at how the debris is distributed, and whether it is more likely to be tracked in certain clones or replicates.
 #
 # 3ai. The livecyte dataset contains data for all 'frames' taken over the 4-day period, so we will collapse the frames into a single row per tracking.id.
 #
@@ -93,8 +94,8 @@ mean.speed_manual <- ggplot(manual, aes(x = mean.speed)) +
   facet_wrap(~ cell.line) +
   geom_histogram(binwidth = 0.05)
 # 
-# 3biv. Overlay distributions to see if they are similar; if they are, we can use the same thresholds for filtering out debris from the livecyte dataset.
-# euclidean.distance and final_displacement
+# 3biv. Overlay distributions to see if they are similar
+# final_displacement and euclidean.distance
 ggplot() +
   geom_histogram(data = manual, aes(x = euclidean.distance), fill = "blue", alpha = 0.5, binwidth = 30) +
   geom_histogram(data = livecyte_filtered, aes(x = final_displacement), fill = "red", alpha = 0.5, binwidth = 30) +
@@ -108,36 +109,117 @@ ggplot() +
 #
 # mean.speed
 ggplot() +
-  geom_histogram(data = manual, aes(x = mean.speed), fill = "blue", alpha = 0.5, binwidth = 0.01) +
-  geom_histogram(data = livecyte_filtered, aes(x = mean.speed), fill = "red", alpha = 0.5, binwidth = 0.01) +
+  geom_histogram(data = manual, aes(x = mean.speed), fill = "blue", alpha = 0.5, binwidth = 0.03) +
+  geom_histogram(data = livecyte_filtered, aes(x = mean.speed), fill = "red", alpha = 0.5, binwidth = 0.03) +
   facet_wrap(~ cell.line)
 #
-# Clone A appears more likely for the automated Livecyte tracking to lose cells, leading to a different distributions for A1 than B2.
+# Clone A appears more likely for the automated Livecyte tracking to lose cells, leading to a different distributions between manual and livecyte for A1 than B2.
 #
 # 3c. Perform Wilcoxon rank sum and Kolmogorov-Smirnov tests to determine if the distributions of the manual and livecyte_filtered datasets are significantly different for each parameter. This will allow us to quantify the accuracy of the livecyte tracking data.
+# A1 euclidean distance vs final displacement
+w_A1_euc <- wilcox.test(manual |> filter(cell.line == "A1") |> pull(euclidean.distance),
+                        livecyte_filtered |> filter(clone == "cloneA", replicate == "1") |> pull(final_displacement))
+k_A1_euc <- ks.test(manual |> filter(cell.line == "A1") |> pull(euclidean.distance),
+                    livecyte_filtered |> filter(clone == "cloneA", replicate == "1") |> pull(final_displacement))
 #
-# 3ci. euclidean.distance and final_displacement
-ks_test_euc <- ks.test(manual$euclidean.distance, livecyte_filtered$final_displacement)
-wilcox_test_euc <- wilcox.test(manual$euclidean.distance, livecyte_filtered$final_displacement)
-print(ks_test_euc)
-print(wilcox_test_euc)
-# KS: D = 0.074627, p-value = 0.6319
-# Wilcoxon: W = 20184, p-value = 0.9426
+# A1 track length vs total path length
+w_A1_trk <- wilcox.test(manual |> filter(cell.line == "A1") |> pull(track.length),
+                        livecyte_filtered |> filter(clone == "cloneA", replicate == "1") |> pull(total_path_length))
+k_A1_trk <- ks.test(manual |> filter(cell.line == "A1") |> pull(track.length),
+                    livecyte_filtered |> filter(clone == "cloneA", replicate == "1") |> pull(total_path_length))
 #
-# 3cii. track.length and total_path_length
-ks_test_track <- ks.test(manual$track.length, livecyte_filtered$total_path_length)
-wilcox_test_track <- wilcox.test(manual$track.length, livecyte_filtered$total_path_length)
-print(ks_test_track)
-print(wilcox_test_track)
-# KS: D = 0.30341, p-value = 1.928e-08
-# Wilcoxon: W = 22746, p-value = 0.02262
+# A1 mean speed vs mean speed
+w_A1_spd <- wilcox.test(manual |> filter(cell.line == "A1") |> pull(mean.speed),
+                        livecyte_filtered |> filter(clone == "cloneA", replicate == "1") |> pull(mean.speed))
+k_A1_spd <- ks.test(manual |> filter(cell.line == "A1") |> pull(mean.speed),
+                    livecyte_filtered |> filter(clone == "cloneA", replicate == "1") |> pull(mean.speed))
 #
-# 3ciii. mean.speed
-ks_test_speed <- ks.test(manual$mean.speed, livecyte_filtered$mean.speed)
-wilcox_test_speed <- wilcox.test(manual$mean.speed, livecyte_filtered$mean.speed)
-print(ks_test_speed)
-print(wilcox_test_speed)
-# KS: D = 0.19, p-value = 0.001464
-# W = 21994, p-value = 0.08464
+# B2 euclidean distance vs final displacement
+w_B2_euc <- wilcox.test(manual |> filter(cell.line == "B2") |> pull(euclidean.distance),
+                        livecyte_filtered |> filter(clone == "cloneB", replicate == "2") |> pull(final_displacement))
+k_B2_euc <- ks.test(manual |> filter(cell.line == "B2") |> pull(euclidean.distance),
+                    livecyte_filtered |> filter(clone == "cloneB", replicate == "2") |> pull(final_displacement))
 #
-# Based on the statistical tests, the distributions 
+# B2 track length vs total path length
+w_B2_trk <- wilcox.test(manual |> filter(cell.line == "B2") |> pull(track.length),
+                        livecyte_filtered |> filter(clone == "cloneB", replicate == "2") |> pull(total_path_length))
+k_B2_trk <- ks.test(manual |> filter(cell.line == "B2") |> pull(track.length),
+                    livecyte_filtered |> filter(clone == "cloneB", replicate == "2") |> pull(total_path_length))
+#
+# B2 mean speed vs mean speed
+w_B2_spd <- wilcox.test(manual |> filter(cell.line == "B2") |> pull(mean.speed),
+                        livecyte_filtered |> filter(clone == "cloneB", replicate == "2") |> pull(mean.speed))
+k_B2_spd <- ks.test(manual |> filter(cell.line == "B2") |> pull(mean.speed),
+                    livecyte_filtered |> filter(clone == "cloneB", replicate == "2") |> pull(mean.speed))
+#
+# Collect into tibble
+test_results <- tibble(
+  cell_line  = c("A1",      "A1",       "A1",      "B2",      "B2",       "B2"),
+  parameter  = c("displacement", "path_length", "mean_speed",
+                 "displacement", "path_length", "mean_speed"),
+  wilcox_W   = c(w_A1_euc$statistic, w_A1_trk$statistic, w_A1_spd$statistic,
+                 w_B2_euc$statistic, w_B2_trk$statistic, w_B2_spd$statistic),
+  wilcox_p   = c(w_A1_euc$p.value,   w_A1_trk$p.value,   w_A1_spd$p.value,
+                 w_B2_euc$p.value,   w_B2_trk$p.value,   w_B2_spd$p.value),
+  ks_D       = c(k_A1_euc$statistic, k_A1_trk$statistic, k_A1_spd$statistic,
+                 k_B2_euc$statistic, k_B2_trk$statistic, k_B2_spd$statistic),
+  ks_p       = c(k_A1_euc$p.value,   k_A1_trk$p.value,   k_A1_spd$p.value,
+                 k_B2_euc$p.value,   k_B2_trk$p.value,   k_B2_spd$p.value)
+)
+#
+# Displacement is the only reliable debris-filtering parameter. The distributions for the other two parameters vary too much between the manual and livecyte datasets, likely due to the livecyte tracking losing cells, especially in A1.
+#
+# 4. Check whether the debris is more likely to be tracked in certain clones or replicates by plotting the distribution of final_displacement for each replicate in the livecyte_pretty dataset.
+#
+# 4a. Split datasets into A1 and B2
+pretty_A <- livecyte_pretty |> filter(clone == "cloneA" & replicate == "1")
+pretty_B <- livecyte_pretty |> filter(clone == "cloneB" & replicate == "2")
+#
+# 4b. Create a 'debris' dataset from livecyte_pretty using livecyte_filtered
+debris_A <- pretty_A |> 
+anti_join(tid_mapping, by = c("clone", "replicate", "tracking.id"))
+debris_B <- pretty_B |> 
+  anti_join(tid_mapping, by = c("clone", "replicate", "tracking.id"))
+#
+# 4c. Plot the distribution of the debris in A1 and B2
+# A
+ggplot(debris_A, aes(x = final_displacement)) +
+  geom_histogram(binwidth = 10)
+# B
+ggplot(debris_B, aes(x = final_displacement)) +
+  geom_histogram(binwidth = 10)
+#
+# 4d. Check homogeneity of debris across replicates using statistical tests.
+# 4di. Create full debris dataset across all replicates
+livecyte_debris <- livecyte_pretty |>
+  anti_join(tid_mapping, by = c("clone", "replicate", "tracking.id"))
+#
+# 4dii. Split by clone and drop unused factor levels
+debris_A_all <- livecyte_debris |> filter(clone == "cloneA") |> droplevels()
+debris_B_all <- livecyte_debris |> filter(clone == "cloneB") |> droplevels()
+#
+# 4diii. Perform AD test to check for homogeneity of debris distribution across replicates within each clone
+#
+# A
+ad_debris_A <- do.call(ad.test, split(debris_A_all$final_displacement, debris_A_all$replicate))
+#
+# B
+ad_debris_B <- do.call(ad.test, split(debris_B_all$final_displacement, debris_B_all$replicate))
+#
+# 4div. Perform pairwise Wilcoxon tests for pairwise differences, with BH correction
+pairwise.wilcox.test(debris_A_all$final_displacement, debris_A_all$replicate, p.adjust.method = "BH")
+pairwise.wilcox.test(debris_B_all$final_displacement, debris_B_all$replicate, p.adjust.method = "BH")
+#
+# Clone B replicate 3 seems to be highly significantly different from the other replicates, which could be due to a biological difference, or a difference in debris distribution.
+#
+#  4e. Plot the distribution of the debris in each replicate to visually check for differences.
+# A
+ggplot(debris_A_all, aes(x = final_displacement)) +
+  geom_histogram(binwidth = 10) +
+  facet_wrap(~ replicate)
+# B
+ggplot(debris_B_all, aes(x = final_displacement)) +
+  geom_histogram(binwidth = 10) +
+  facet_wrap(~ replicate)
+#
+# This is too much work for too little gain. The debris distribution is not homogenous across replicates, but it's difficult to determine how this overlaps with cells.
