@@ -127,7 +127,7 @@ ggplot(lmm_results, aes(x = feature, y = estimate)) +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) + 
   geom_text(aes(label = sig), vjust = -1) + 
   theme_bw() + 
-  labs(title = "LMM Results: Clone Effect on Features",
+  labs(title = "Linear Mixed Model Results",
        x = "Feature",
        y = "Estimated Effect of Clone") + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
