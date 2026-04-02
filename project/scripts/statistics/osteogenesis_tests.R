@@ -1,7 +1,5 @@
 # ==============================================================================
-# Livecyte Data Analysis
-# - Statistical analysis:
-# - Osteogenesis differentiation statistical tests
+# Osteogenesis Differentiation Data Analysis
 # =============================================================================
 #
 # 1. Load libraries
