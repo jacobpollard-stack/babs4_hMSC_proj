@@ -139,6 +139,11 @@ livecyte_final <- livecyte_pretty |>
     mean.speed >= filter_params$mean.speed
   )
 #
+# 4c. Change cloneA and cloneB to simply A and B to make figure legends nicer
+#
+livecyte_final <- livecyte_final |> 
+  mutate(clone = recode(clone, "cloneA" = "A", "cloneB" = "B"))
+#
 # 5. Only keep tracking.ids in the livecyte dataset that are found in our new filtered dataset --------------------------------------------------------------
 livecyte <- livecyte_final |>
   select(clone, replicate, tracking.id) |>

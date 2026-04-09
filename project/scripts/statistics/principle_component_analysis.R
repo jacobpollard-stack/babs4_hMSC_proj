@@ -1,6 +1,6 @@
 # ==============================================================================
 # Livecyte Data Analysis
-# - Statistical analysis:
+# - Statistical analysis and figures:
 # - Principle Component Analysis (PCA)
 # ==============================================================================
 #
@@ -16,7 +16,7 @@ metrics <- read_tsv('project/data/movement_morphology/livecyte_collapsed_filtere
 #
 # 3. Principle Component Analysis (PCA)
 #
-# 3a.Select numeric columns for PCA and remove replicate and tracking.id
+# 3aii.Select numeric columns for PCA and remove replicate and tracking.id
 #
 numeric_metrics <- metrics |> 
   select(-replicate, -tracking.id) |> 
@@ -35,9 +35,10 @@ pca_df <- as.data.frame(pca_result$x) |>
 #
 ggplot(pca_df, aes(x = PC1, y = PC2, colour = clone)) +
   geom_point(size = 3) +
-  labs(x = 'Morphology',
-       y = 'Movement') +
-  theme_minimal() +
+  labs(x = 'PC1: Morphology',
+       y = 'PC2: Movement',
+       colour = "Clone") +
+  theme_bw() +
   stat_ellipse(level = 0.95, aes(fill = clone), alpha = 0, geom = "polygon", show.legend = FALSE) +
   theme(legend.position = "right")
 #
@@ -51,3 +52,4 @@ plot_ly(pca_df, x = ~PC1, y = ~PC2, z = ~PC3, color = ~clone, type = 'scatter3d'
                       zaxis = list(title = 'Persistence')))
 #
 # The 3D plot shows that the clones form two seperate clouds in the PCA space, with some overlap. This indicates that, when considering morphology, movement, and 'persistence' (how long it stays on screen, and its mean speed), the two clones are largely distinct. This suggests that the clones have different phenotypic profiles, which could be due to different osteogenic potential.
+#
