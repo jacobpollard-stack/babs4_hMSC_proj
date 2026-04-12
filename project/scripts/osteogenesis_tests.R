@@ -105,7 +105,7 @@ osteo_plot <- ggplot(osteo_long, aes(x = day)) +
     guide = guide_legend(override.aes = list(shape = 16, linetype = 1))) +
   scale_fill_manual(
     name = NULL,
-    values = c("DNA concentration" = "grey70")) +
+    values = c("DNA concentration" = "grey50")) +
   labs(
     x = "Day",
     y = "Absorbance 405nm (AU)") +
@@ -126,11 +126,8 @@ osteo_plot <- ggplot(osteo_long, aes(x = day)) +
       element_text(colour = "black", face = "bold")))) +
   theme_bw() +
   theme(legend.position = "top",
-        axis.text.x = element_text(colour = "#303130"))
-
+        axis.text.x = element_text(colour = "#454644"))
 osteo_plot
-#
 # 6. Save plot
 #
 ggsave("project/figures/osteogenesis/osteo_plot.png", osteo_plot)
-
