@@ -13,6 +13,9 @@ library(ggh4x)
 #
 osteo  <- read_xlsx("project/data/differentiation/osteogenesis_processed.xlsx")
 #
+dna <- read_xlsx("project/data/differentiation/DNA_cell_lysates.xlsx",
+                 col_types = c("text", "text", "numeric"))
+#
 # 3. Pivot longer ----------------------------------------------------------
 #
 osteo_long <- osteo |> 
@@ -80,24 +83,40 @@ wilcox_osteo_change <- wilcox.test(change ~ clone, data = osteo_change)
 #
 # 5. Plot the osteogenesis data
 #
-osteo_plot <- ggplot(osteo_long, aes(x = day, y = absorption, group = replicate)) +
-  geom_line(aes(colour = clone), alpha = 0.4, linewidth = 0.7) +
-  geom_point(aes(colour = clone), size = 2.5) +
-  facet_wrap(~ clone) +
-  scale_colour_manual(values = c(
-    "A" = "#f7766f",
-    "B" = "#0dc1c5"),
-    guide = "none") +
+# 5a. Rescale DNA axis to fit absorbance axis
+#
+max_abs <- max(osteo_long$absorption, na.rm = TRUE)
+max_dna <- max(dna$conc, na.rm = TRUE)
+scale_factor <- max_abs / max_dna
+#
+# 5b.
+#
+osteo_plot <- ggplot(osteo_long, aes(x = day)) +
+  geom_col(data = dna,
+           aes(y = conc * scale_factor, fill = "DNA concentration"),
+           position = "dodge", alpha = 0.3, width = 0.6) +
+  geom_line(aes(y = absorption, colour = "Absorbance", group = replicate),
+            alpha = 0.4, linewidth = 0.7) +
+  geom_point(aes(y = absorption, colour = "Absorbance"),
+             size = 1) +
+  scale_colour_manual(
+    name = NULL,
+    values = c("Absorbance" = "black"),
+    guide = guide_legend(override.aes = list(shape = 16, linetype = 1))) +
+  scale_fill_manual(
+    name = NULL,
+    values = c("DNA concentration" = "grey70")) +
   labs(
     x = "Day",
-    y = "Absorption") +
-  theme(legend.position = "none",
-    strip.text = element_text(face = "bold")) +
+    y = "Absorbance 405nm (AU)") +
   scale_x_discrete(labels = c(
     "0" = "0",
     "8" = "8",
     "8osteo" = "8 in osteogenic\nmedium")) +
-  scale_y_continuous(n.breaks = 10) +
+  scale_y_continuous(
+    n.breaks = 10,
+    sec.axis = sec_axis(~ . / scale_factor,
+                        name = expression("[DNA] (µg mL"^-1*")"))) +
   facet_wrap2(~ clone, strip = strip_themed(
     background_x = list(
       element_rect(fill = "#f7766f"),
@@ -105,7 +124,11 @@ osteo_plot <- ggplot(osteo_long, aes(x = day, y = absorption, group = replicate)
     text_x = list(
       element_text(colour = "black", face = "bold"),
       element_text(colour = "black", face = "bold")))) +
-  theme_bw()
+  theme_bw() +
+  theme(legend.position = "top",
+        axis.text.x = element_text(colour = "#303130"))
+
+osteo_plot
 #
 # 6. Save plot
 #
