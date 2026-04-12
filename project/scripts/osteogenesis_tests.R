@@ -1,25 +1,28 @@
-# ==============================================================================
+# ==========================================================================
 # Osteogenesis Differentiation Data Analysis
-# =============================================================================
+# ==========================================================================
 #
-# 1. Load libraries
+# 1. Load libraries --------------------------------------------------------
+#
 library(tidyverse)
 library(rcompanion)
 library(dunn.test)
 #
-# 2. Load data
+# 2. Load data -------------------------------------------------------------
 #
 osteo  <- read_xlsx("project/data/differentiation/osteogenesis_processed.xlsx")
 #
-# 3. Pivot longer
+# 3. Pivot longer ----------------------------------------------------------
 #
-osteo_long <- osteo %>%
-  pivot_longer(cols = c("0", "8", "8osteo"), names_to = "day", values_to = "absorption") %>%
+osteo_long <- osteo |> 
+  pivot_longer(cols = c("0", "8", "8osteo"), names_to = "day", values_to = "absorption") |> 
   mutate(day = as.factor(day))
 #
-# 4. Statistical tests
+# 4. Statistical tests -----------------------------------------------------
 #
-# 4a. Scheirer–Ray–Hare test on day 8 data
+# 4a. Mann-Whitney U Test
+#
+# We're using a Mann-Whitney test as we're testing the statistical significance of the differences in absorption between days, and clones. The sample 
 #
 # 4ai. Subset data for day 8 and 8osteo to quantify the effect of clone and osteogenic medium
 #

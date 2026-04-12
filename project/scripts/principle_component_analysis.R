@@ -16,10 +16,10 @@ metrics <- read_tsv('project/data/movement_morphology/livecyte_collapsed_filtere
 #
 # 3. Principle Component Analysis (PCA)
 #
-# 3a. Select numeric columns for PCA and remove replicate and tracking.id
+# 3a. Select numeric columns for PCA and remove replicate and tracking.id, along with parameters that are non-biological
 #
 numeric_metrics <- metrics |> 
-  select(-replicate, -tracking.id) |> 
+  select(-replicate, -tracking.id, -n_frames, -start_frame) |> 
   select(where(is.numeric))
 #
 # 3b. Perform PCA
@@ -43,11 +43,11 @@ data.frame(PC = paste0("PC", 1:length(pve)), PVE = pve) |>
   ggplot(aes(x = PC, y = PVE)) +
   geom_bar(stat = "identity")
 #
-# We see that PC1, 2, and 3 explain ~70% of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less interpretable
+# We see that PC1, 2, and 3 explain ~78 of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less biologically interpretable
 #
 # 4. Peform non-parametric statistical tests to determine the difference in Principle Components between the two clones
 #
-# 4a. Isolate the 3 most biologically interpretable PCs: PC1 largely represents morphology; PC2 largely represents movement; PC3 largely represents 'persistence' (how long the cell stays on screen, and its mean speed).
+# 4a. Isolate the 3 most biologically interpretable PCs: PC1 largely represents morphology; PC2 mostly represents how far the cell moved and how much it meandered, but also seems to be correlated with length to width ratio and dry mass. As dry mass, volume, and total path length are not significantly different between the two clones, PC2 could be identifying debris: A high PC2 value could be a debris marker. PC3 largely represents movement, which is also correlated with other morphological parameters.
 #
 PC1_PC2_PC3 <- pca_df |> 
   select(clone, PC1, PC2, PC3)
@@ -75,8 +75,8 @@ med_PC3_B <- median(pca_df$PC3[pca_df$clone == "B"])
 PC2_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC2, colour = clone, alpha = clone)) +
   geom_point(size = 3) +
   scale_alpha_manual(values = c("A" = 0.4, "B" = 0.25), guide = "none") +
-  labs(x = 'PC1: Morphology',
-       y = 'PC2: Movement',
+  labs(x = 'PC1',
+       y = 'PC2',
        colour = "Clone") +
   theme_test() +
   stat_ellipse(level = 0.95, aes(fill = clone), alpha = 0, geom = "polygon", show.legend = FALSE) +
@@ -91,12 +91,12 @@ PC2_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC2, colour = clone, alpha = clo
   annotate("segment", x = -4.5, xend = -4.5, y = med_PC2_A, yend = med_PC2_B) +
   annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC2_A, yend = med_PC2_A) +
   annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC2_B, yend = med_PC2_B) +
-  annotate("text", x = -4.8, y = 0.35, label = "***", size = 4.5) +
+  annotate("text", x = -4.8, y = -0.1, label = "***", size = 4.5) +
 #
-  annotate("segment", x = med_PC1_B, xend = med_PC1_A, y = -4.2) +
-  annotate("segment", x = med_PC1_B, y = -4.2, yend = -4.2 + 0.35) +
-  annotate("segment", x = med_PC1_A, y = -4.2, yend = -4.2 + 0.35) +
-  annotate("text", x = 0, y = -4.6, label = "***", size = 4.5)
+  annotate("segment", x = med_PC1_B, xend = med_PC1_A, y = -3.5) +
+  annotate("segment", x = med_PC1_B, y = -3.5, yend = -3.5 + 0.35) +
+  annotate("segment", x = med_PC1_A, y = -3.5, yend = -3.5 + 0.35) +
+  annotate("text", x = 0.1, y = -4, label = "***", size = 4.5)
 #
 # 5b. PC3 on PC1
 #
@@ -105,8 +105,8 @@ PC2_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC2, colour = clone, alpha = clo
 PC3_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC3, colour = clone, alpha = clone)) +
   geom_point(size = 3) +
   scale_alpha_manual(values = c("A" = 0.4, "B" = 0.25), guide = "none") +
-  labs(x = 'PC1: Morphology',
-       y = 'PC3: Persistence',
+  labs(x = 'PC1',
+       y = 'PC3',
        colour = "Clone") +
   theme_test() +
   stat_ellipse(level = 0.95, aes(fill = clone), alpha = 0, geom = "polygon", show.legend = FALSE) +
@@ -121,12 +121,12 @@ PC3_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC3, colour = clone, alpha = clo
   annotate("segment", x = -4.5, xend = -4.5, y = med_PC3_A, yend = med_PC3_B) +
   annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC3_A, yend = med_PC3_A) +
   annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC3_B, yend = med_PC3_B) +
-  annotate("text", x = -4.75, y = -0.2, label = "***", size = 4.5) +
+  annotate("text", x = -4.8, y = 0, label = "***", size = 4.5) +
   #
-  annotate("segment", x = med_PC1_B, xend = med_PC1_A, y = -3.5) +
-  annotate("segment", x = med_PC1_B, y = -3.5, yend = -3.5 + 0.2) +
-  annotate("segment", x = med_PC1_A, y = -3.5, yend = -3.5 + 0.2) +
-  annotate("text", x = 0, y = -3.8, label = "***", size = 4.5)
+  annotate("segment", x = med_PC1_B, xend = med_PC1_A, y = -3) +
+  annotate("segment", x = med_PC1_B, y = -3, yend = -3 + 0.2) +
+  annotate("segment", x = med_PC1_A, y = -3, yend = -3 + 0.2) +
+  annotate("text", x = 0.1, y = -3.3, label = "***", size = 4.5)
 #
 # 5c. PC3 on PC2
 #
@@ -135,8 +135,8 @@ PC3_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC3, colour = clone, alpha = clo
 PC3_PC2_plot <- ggplot(pca_df, aes(x = PC2, y = PC3, colour = clone, alpha = clone)) +
   geom_point(size = 3) +
   scale_alpha_manual(values = c("A" = 0.4, "B" = 0.25), guide = "none") +
-  labs(x = 'PC2: Movement',
-       y = 'PC3: Persistence',
+  labs(x = 'PC2',
+       y = 'PC3',
        colour = "Clone") +
   theme_test() +
   stat_ellipse(level = 0.95, aes(fill = clone), alpha = 0, geom = "polygon", show.legend = FALSE) +
@@ -148,15 +148,15 @@ PC3_PC2_plot <- ggplot(pca_df, aes(x = PC2, y = PC3, colour = clone, alpha = clo
 #
 # 5bii. Statistical labels
 #
-  annotate("segment", x = -4.3, xend = -4.3, y = med_PC3_A, yend = med_PC3_B) +
-  annotate("segment", x = -4.3, xend = -4.3 + 0.1, y = med_PC3_A, yend = med_PC3_A) +
-  annotate("segment", x = -4.3, xend = -4.3 + 0.1, y = med_PC3_B, yend = med_PC3_B) +
-  annotate("text", x = -4.6, y = -0.2, label = "***", size = 4.5) +
+  annotate("segment", x = -3.2, xend = -3.2, y = med_PC3_A, yend = med_PC3_B) +
+  annotate("segment", x = -3.2, xend = -3.2 + 0.1, y = med_PC3_A, yend = med_PC3_A) +
+  annotate("segment", x = -3.2, xend = -3.2 + 0.1, y = med_PC3_B, yend = med_PC3_B) +
+  annotate("text", x = -3.5, y = 0, label = "***", size = 4.5) +
   #
-  annotate("segment", x = med_PC2_B, xend = med_PC2_A, y = -3.5) +
-  annotate("segment", x = med_PC2_B, y = -3.5, yend = -3.5 + 0.2) +
-  annotate("segment", x = med_PC2_A, y = -3.5, yend = -3.5 + 0.2) +
-  annotate("text", x = 0.375, y = -3.8, label = "***", size = 4.5)
+  annotate("segment", x = med_PC2_B, xend = med_PC2_A, y = -3) +
+  annotate("segment", x = med_PC2_B, y = -3, yend = -3 + 0.2) +
+  annotate("segment", x = med_PC2_A, y = -3, yend = -3 + 0.2) +
+  annotate("text", x = -0.15, y = -3.3, label = "***", size = 4.5)
 #
 # 6. Build a loadings plot to show which features contribute most to each PC
 #
