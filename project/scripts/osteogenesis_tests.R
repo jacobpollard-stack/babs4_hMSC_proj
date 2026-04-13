@@ -89,7 +89,16 @@ max_abs <- max(osteo_long$absorption, na.rm = TRUE)
 max_dna <- max(dna$conc, na.rm = TRUE)
 scale_factor <- max_abs / max_dna
 #
-# 5b.
+# 5b. Change clones to make the facet titles nicer
+osteo_long$clone <- factor(osteo_long$clone,
+                           levels = c("A", "B"),
+                           labels = c("Clone A", "Clone B"))
+#
+dna$clone <- factor(dna$clone,
+                    levels = c("A", "B"),
+                    labels = c("Clone A", "Clone B"))
+#
+# 5c. Plot figure
 #
 osteo_plot <- ggplot(osteo_long, aes(x = day)) +
   geom_col(data = dna,
@@ -128,6 +137,7 @@ osteo_plot <- ggplot(osteo_long, aes(x = day)) +
   theme(legend.position = "top",
         axis.text.x = element_text(colour = "#454644"))
 osteo_plot
+#
 # 6. Save plot
 #
 ggsave("project/figures/osteogenesis/osteo_plot.png", osteo_plot)
