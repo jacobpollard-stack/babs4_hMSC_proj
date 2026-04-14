@@ -12,10 +12,13 @@ library(ggplot2)
 library(emmeans)
 library(dplyr)
 library(patchwork)
+library(ggh4x)
 #
 # 2. Load data
 #
 df <- read.delim("project/data/movement_morphology/livecyte_collapsed_filtered.tsv")
+#
+collapsed <- read.delim('project/data/movement_morphology/livecyte_filtered.tsv')
 #
 # 3. Statistical analysis of movement data
 #
@@ -216,9 +219,83 @@ p_total_path_length <- ggplot() +
   theme_bw()
 p_total_path_length
 #
-# 8. Save all plots
+# 8. Cell movement plot
+#
+# 8a. Normalise position.x and position.y values
+#
+collapsed <- collapsed |> 
+  group_by(clone, replicate, tracking.id) |> 
+  arrange(frame, .by_group = TRUE) |> 
+  mutate(
+    dx = position.x - first(position.x),
+    dy = position.y - first(position.y)
+  ) |> 
+  ungroup()
+#
+# 8b. Form track plot
+#
+# 8bi. Sample size per clone = 50
+#
+set.seed(42)
+#
+sampled_ids <- collapsed |> 
+  distinct(clone, replicate, tracking.id) |> 
+  group_by(clone) |> 
+  slice_sample(n = 50) |> 
+  ungroup()
+#
+df_sample <- collapsed |> 
+  semi_join(sampled_ids, by = c("clone", "replicate", "tracking.id"))
+#
+# 8bii. Rename A and B to clone A and clone B for facet header
+#
+df_sample$clone <- factor(df_sample$clone,
+                    levels = c("A", "B"),
+                    labels = c("Clone A", "Clone B"))
+#
+# 8biii. Plot
+#
+endpoints <- df_sample |> 
+  group_by(clone, replicate, tracking.id) |> 
+  slice_tail(n = 1) |> 
+  ungroup()
+#
+p_spaghetti <- ggplot() +
+  geom_hline(yintercept = 0, colour = "grey", linewidth = 0.4, linetype = "dashed") +
+  geom_vline(xintercept = 0, colour = "grey", linewidth = 0.4, linetype = "dashed") +
+  geom_path(
+    data = df_sample,
+    aes(x = dx, y = dy,
+        group = interaction(replicate, tracking.id),
+        colour = clone),
+    alpha = 0.35, linewidth = 0.4
+  ) +
+  geom_point(
+    data = endpoints,
+    aes(x = dx, y = dy, colour = clone),
+    size = 0.8, alpha = 0.5
+  ) +
+  annotate("point", x = 0, y = 0, shape = 3, size = 2, colour = "black") +
+  facet_wrap2(~ clone, strip = strip_themed(
+    background_x = list(
+      element_rect(fill = "#f7766f"),
+      element_rect(fill = "#0dc1c5")),
+    text_x = list(
+      element_text(colour = "black", face = "bold"),
+      element_text(colour = "black", face = "bold")))) +
+  scale_colour_manual(values = clone_cols, guide = "none") +
+  coord_equal() +
+  labs(
+    x = expression("x displacement (" * mu * "m)"),
+    y = expression("y displacement (" * mu * "m)")
+  ) +
+  theme_classic()
+p_spaghetti
+#
+# 9. Save all plots
 #
 ggsave("project/figures/movement_morphology/mean.speed_plot.png", p_mean.speed, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement_morphology/final_displacement_plot.png", p_final_displacement, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement_morphology/total_path_length_plot.png", p_total_path_length, width = 4, height = 5, dpi = 300)
+ggsave("project/figures/movement_morphology/tracking_figure.png", p_spaghetti, width = 4, height = 5, dpi = 300)
 
