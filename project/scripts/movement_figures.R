@@ -264,6 +264,90 @@ p_spaghetti <- ggplot() +
   theme_classic()
 p_spaghetti
 #
+# 8. MSD plot
+#
+# 8a. Compute MSD per cell at each time lag
+#
+frame_interval <- 23 / 60
+#
+max_lag <- 30
+#
+msd_cell <- collapsed |>
+  group_by(clone, replicate, tracking.id) |>
+  arrange(frame, .by_group = TRUE) |>
+  do({
+    pos <- .
+    n   <- nrow(pos)
+    lags <- seq_len(min(max_lag, n - 1))
+    tibble(
+      lag = lags,
+      msd = sapply(lags, function(tau) {
+        dx <- pos$position.x[(1 + tau):n] - pos$position.x[1:(n - tau)]
+        dy <- pos$position.y[(1 + tau):n] - pos$position.y[1:(n - tau)]
+        mean(dx^2 + dy^2)
+      })
+    )
+  }) |>
+  ungroup()
+#
+# 8b. Convert lag from frames to real time
+#
+msd_cell$time <- msd_cell$lag * frame_interval
+#
+# 8c. Summarise: replicate-level means, then clone-level mean ± SE
+#
+msd_rep <- msd_cell |>
+  group_by(clone, replicate, time) |>
+  summarise(msd_mean = mean(msd, na.rm = TRUE), .groups = "drop")
+#
+msd_clone <- msd_rep |>
+  group_by(clone, time) |>
+  summarise(
+    msd_grand = mean(msd_mean),
+    msd_se    = sd(msd_mean) / sqrt(n()),
+    .groups   = "drop"
+  )
+#
+# 8d. Clone labels
+#
+msd_clone$clone <- factor(msd_clone$clone, levels = c("A", "B"))
+#
+# 8e. MSD plot (log–log scale)
+#
+p_msd <- ggplot(msd_clone, aes(x = time, y = msd_grand, colour = clone, fill = clone)) +
+  geom_ribbon(
+    aes(ymin = msd_grand - msd_se, ymax = msd_grand + msd_se),
+    alpha = 0.2, colour = NA
+  ) +
+  geom_line(linewidth = 0.8) +
+  # reference line for pure diffusion (slope = 1 on log-log)
+  geom_abline(
+    intercept = log10(msd_clone$msd_grand[msd_clone$time == min(msd_clone$time)][1]),
+    slope = 1,
+    linetype = "dashed", colour = "grey40", linewidth = 0.4
+  ) +
+  scale_colour_manual(values = clone_cols, labels = c("Clone A", "Clone B")) +
+  scale_fill_manual(values   = clone_fills, guide = "none") +
+  scale_x_log10() +
+  scale_y_log10() +
+  annotation_logticks(sides = "bl", size = 0.3) +
+  labs(
+    x      = "Time lag (h)",
+    y      = expression("MSD (" * mu * "m"^2 * ")"),
+    colour = NULL
+  ) +
+  theme_bw() +
+  theme(legend.position = c(0.15, 0.9))
+p_msd
+#
+
+
+
+
+
+
+
+
 # 8. Save all plots
 #
 ggsave("project/figures/movement/mean.speed_plot.png", p_mean.speed, width = 4, height = 5, dpi = 300)

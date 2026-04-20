@@ -160,49 +160,9 @@ p_radius <- ggplot() +
   theme_bw()
 p_radius
 #
-# 4c. Thickness
+# 4c. Sphericity
 #
 # 4ci. Define label positions
-#
-t_ymax   <- max(df$mean.thickness, na.rm = TRUE)
-t_yrange <- t_ymax - min(df$mean.thickness, na.rm = TRUE)
-t_brack  <- t_ymax + t_yrange * 0.06
-t_tick   <- t_yrange * 0.02
-t_label  <- t_brack + t_yrange * 0.04
-#
-# 4cii. Build plot
-#
-p_thickness <- ggplot() +
-  geom_jitter(
-    data = df,
-    aes(x = clone, y = mean.thickness, colour = clone_rep),
-    width = 0.25, size = 0.6, alpha = 0.35, shape = 16
-  ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = t_mean, ymin = t_mean - t_se, ymax = t_mean + t_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
-  ) +
-  geom_point(
-    data = rep_means,
-    aes(x = clone, y = mean_thickness, colour = clone_rep),
-    size = 3, shape = 18,
-    position = position_dodge(width = 0.2)
-  ) +
-  annotate("segment", x = 1, xend = 2, y = t_brack, yend = t_brack, linewidth = 0.4) +
-  annotate("segment", x = 1, xend = 1, y = t_brack, yend = t_brack - t_tick, linewidth = 0.4) +
-  annotate("segment", x = 2, xend = 2, y = t_brack, yend = t_brack - t_tick, linewidth = 0.4) +
-  annotate("text", x = 1.5, y = t_label, label = "p = 0.0000", size = 3.5) +
-  scale_colour_manual(values = rep_cols, guide = "none") +
-  scale_x_discrete(labels = c("Clone A", "Clone B")) +
-  scale_y_continuous(n.breaks = 15) +
-  labs(x = NULL, y = expression("Mean Thickness (" * mu * "m)")) +
-  theme_bw()
-p_thickness
-#
-# 4d. Sphericity
-#
-# 4di. Define label positions
 #
 s_ymax   <- max(df$sphericity, na.rm = TRUE)
 s_yrange <- s_ymax - min(df$sphericity, na.rm = TRUE)
@@ -210,7 +170,7 @@ s_brack  <- s_ymax + s_yrange * 0.06
 s_tick   <- s_yrange * 0.02
 s_label  <- s_brack + s_yrange * 0.04
 #
-# 4dii. Build plot
+# 4cii. Build plot
 #
 p_sphericity <- ggplot() +
   geom_jitter(
@@ -240,9 +200,9 @@ p_sphericity <- ggplot() +
   theme_bw()
 p_sphericity
 #
-# 4e. Length-to-width ratio
+# 4d. Length-to-width ratio
 #
-# 4ei. Define label positions
+# 4di. Define label positions
 #
 lw_ymax   <- max(df$length.to.width.ratio, na.rm = TRUE)
 lw_yrange <- lw_ymax - min(df$length.to.width.ratio, na.rm = TRUE)
@@ -250,7 +210,7 @@ lw_brack  <- lw_ymax + lw_yrange * 0.06
 lw_tick   <- lw_yrange * 0.02
 lw_label  <- lw_brack + lw_yrange * 0.04
 #
-# 4eii. Build plot
+# 4dii. Build plot
 #
 p_ltwr <- ggplot() +
   geom_jitter(
@@ -280,12 +240,11 @@ p_ltwr <- ggplot() +
   theme_bw()
 p_ltwr
 #
-# 4d. Dry mass is just a function of volume, so we can skip plotting it.
+# 4e. Dry mass, mean thickness, and sphericity are all very very highly correlated, so we will represent this parameter simply as sphericity.
 #
 # 5. Save all plots
 #
 ggsave("project/figures/morphology/volume_plot.png", p_volume, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/morphology/radius_plot.png", p_radius, width = 4, height = 5, dpi = 300)
-ggsave("project/figures/morphology/thickness_plot.png", p_thickness, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/morphology/sphericity_plot.png", p_sphericity, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/morphology/length_to_width_plot.png", p_ltwr, width = 4, height = 5, dpi = 300)
