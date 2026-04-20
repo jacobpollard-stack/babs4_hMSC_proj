@@ -266,8 +266,8 @@ p_spaghetti
 #
 # 8. Save all plots
 #
-ggsave("project/figures/movement_morphology/mean.speed_plot.png", p_mean.speed, width = 4, height = 5, dpi = 300)
-ggsave("project/figures/movement_morphology/final_displacement_plot.png", p_final_displacement, width = 4, height = 5, dpi = 300)
-ggsave("project/figures/movement_morphology/total_path_length_plot.png", p_total_path_length, width = 4, height = 5, dpi = 300)
-ggsave("project/figures/movement_morphology/tracking_figure.png", p_spaghetti, width = 4, height = 5, dpi = 300)
+ggsave("project/figures/movement/mean.speed_plot.png", p_mean.speed, width = 4, height = 5, dpi = 300)
+ggsave("project/figures/movement/final_displacement_plot.png", p_final_displacement, width = 4, height = 5, dpi = 300)
+ggsave("project/figures/movement/total_path_length_plot.png", p_total_path_length, width = 4, height = 5, dpi = 300)
+ggsave("project/figures/movement/tracking_figure.png", p_spaghetti, width = 4, height = 5, dpi = 300)
 
