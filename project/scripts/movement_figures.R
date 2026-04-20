@@ -20,66 +20,38 @@ df <- read.delim("project/data/movement_morphology/livecyte_collapsed_filtered.t
 #
 collapsed <- read.delim('project/data/movement_morphology/livecyte_filtered.tsv')
 #
-# 3. Statistical analysis of movement data
+# 3. Define colours and summaries
 #
-# 3a. We have hierarchal data, so we will use a Linear Mixed Model
-# We have 2 clones, and 3 replicates per clone, so we will use clone as a fixed effect and replicate as a random effect.
-# We will follow the LMM with ANOVA to test for significance of the fixed effect.
+# We already have p-values from our LMM:
 #
-# 3ai. mean.speed
+# feature               estimate     se ci_lower ci_upper t_value      df   p_value marginal_r2 conditional_r2 replicate_var residual_var     icc p_adjusted sig  
+# dry.mass                0.0995 0.0704  -0.0385   0.238     1.41    3.30 0.244         0.00247        0.00489       0.00243        0.997 0.00243  0.279     ""   
+# volume                  0.0995 0.0704  -0.0385   0.238     1.41    3.30 0.244         0.00247        0.00489       0.00243        0.997 0.00243  0.279     ""   
+# radius                  1.42   0.0547   1.31     1.52     25.9     3.74 0.0000231     0.498          0.500         0.00190        0.503 0.00377  0.0000923 "***"
+# sphericity             -1.75   0.0271  -1.80    -1.70    -64.6  1274.   0             0.766          0.766         0              0.234 0        0         "***"
+# length.to.width.ratio  -1.31   0.0888  -1.48    -1.13    -14.7     3.98 0.000127      0.421          0.429         0.00866        0.578 0.0148   0.000339  "***"
+# mean.speed             -0.437  0.185   -0.800   -0.0730   -2.35    3.85 0.0807        0.0458         0.0904        0.0462         0.944 0.0467   0.129     ""   
+# total_path_length      -0.122  0.114   -0.346    0.103    -1.06    4.07 0.347         0.00367        0.0179        0.0142         0.987 0.0142   0.347     ""   
+# final_displacement     -0.649  0.108   -0.860   -0.438    -6.02    3.75 0.00469       0.104          0.117         0.0126         0.890 0.0139   0.00937   "**" 
 #
-lmm_mean.speed <- lmer(mean.speed ~ clone + (1 | clone:replicate), data = df)
-mean.speed_anova <- anova(lmm_mean.speed)
-print(mean.speed_anova)
-#
-# Type III Analysis of Variance Table with Satterthwaite's method
-#          Sum Sq  Mean Sq NumDF  DenDF F value  Pr(>F)  
-# clone 0.078854 0.078854     1 3.8531  5.5403 0.08068 .
-#
-# There is a trend towards significance for the effect of clone on mean speed, but it does not reach significance at the 0.05 level (F(1, 3.85) = 5.54, p = 0.081).
-#
-# 3aii. final_displacement
-#
-lmm_final_displacement <- lmer(final_displacement ~ clone + (1 | clone:replicate), data = df)
-final_displacement_anova <- anova(lmm_final_displacement)
-#
-# Type III Analysis of Variance Table with Satterthwaite's method
-#        Sum Sq Mean Sq NumDF  DenDF F value   Pr(>F)   
-# clone 163150  163150     1 3.7544  36.252 0.004687 **
-#
-# There is a significant effect of clone on final displacement (F(1, 3.75) = 36.25, p = 0.004687), indicating that the two clones may differ in their final displacement: clone A had a higher median final displacement (129.6μm) compared to clone B (91.0μm).
-#
-# 3aiii. total_path_length
-#
-lmm_total_path_length <- lmer(total_path_length ~ clone + (1 | clone:replicate), data = df)
-total_path_length_anova <- anova(lmm_total_path_length)
-#
-# Type III Analysis of Variance Table with Satterthwaite's method
-#         Sum Sq Mean Sq NumDF  DenDF F value Pr(>F)
-# clone  20874   20874     1 4.0714  1.1277 0.3471
-#
-# There is no significant effect of clone on total path length (F(1, 4.07) = 1.13, p = 0.3471), indicating that the two clones do not differ in their total path length.
-#
-# 4. Plotting movement data
-#
-# 4ai. Define colour scheme
+# 3ai. Define colour scheme
 #
 clone_cols   <- c("A" = "#F8766D", "B" = "#00BFC4")
 clone_fills  <- c("A" = "#F8766D", "B" = "#00BFC4")
 #
-# 4aii. Define replicate shades
+# 3aii. Define replicate shades
 #
 rep_cols <- c(
   "A.1" = "#e8564a", "A.2" = "#F8766D", "A.3" = "#f9a090",
   "B.1" = "#009ea3", "B.2" = "#00BFC4", "B.3" = "#5dd9dd")
 #
-# 4b. Combine clone and replicate into a single variable
+# 3b. Combine clone and replicate into a single variable
 #
 df$clone     <- factor(df$clone, levels = c("A", "B"))
 df$replicate <- factor(df$replicate)
 df$clone_rep <- interaction(df$clone, df$replicate)
 #
-# 4c. Calculate replicate means
+# 3c. Calculate replicate means
 #
 rep_means <- df |> 
   group_by(clone, replicate, clone_rep) |> 
@@ -90,7 +62,7 @@ rep_means <- df |>
     .groups = "drop"
   )
 #
-# 4d. Calculate clone means + summaries
+# 3d. Calculate clone means + summaries
 #
 clone_summary <- rep_means |> 
   group_by(clone) |> 
@@ -101,9 +73,9 @@ clone_summary <- rep_means |>
     .groups = "drop"
   )
 #
-# 5. Form mean speed plot
+# 4. Form mean speed plot
 #
-# 5a. Define label positions
+# 4a. Define label positions
 #
 ms_ymax   <- max(df$mean.speed, na.rm = TRUE)
 ms_yrange <- ms_ymax - min(df$mean.speed, na.rm = TRUE)
@@ -111,7 +83,7 @@ ms_brack  <- ms_ymax + ms_yrange * 0.06
 ms_tick   <- ms_yrange * 0.02
 ms_label  <- ms_brack + ms_yrange * 0.04
 #
-# 5b. Mean speed plot
+# 4b. Mean speed plot
 #
 p_mean.speed <- ggplot() +
   geom_jitter(
@@ -141,16 +113,16 @@ p_mean.speed <- ggplot() +
   theme_bw()
 p_mean.speed
 #
-# 6. Final displacement plot
+# 5. Final displacement plot
 #
-# 6a. Define label positions
+# 5a. Define label positions
 fd_ymax   <- max(df$final_displacement, na.rm = TRUE)
 fd_yrange <- fd_ymax - min(df$final_displacement, na.rm = TRUE)
 fd_brack  <- fd_ymax + fd_yrange * 0.06
 fd_tick   <- fd_yrange * 0.02
 fd_label  <- fd_brack + fd_yrange * 0.04
 #
-# 6b. Final displacement plot
+# 5b. Final displacement plot
 p_final_displacement <- ggplot() +
   geom_jitter(
     data = df,
@@ -179,9 +151,9 @@ p_final_displacement <- ggplot() +
   theme_bw()
 p_final_displacement
 #
-# 7. Total path length plot
+# 6. Total path length plot
 #
-# 7a. Define label positions
+# 6a. Define label positions
 #
 tp_ymax   <- max(df$total_path_length, na.rm = TRUE)
 tp_yrange <- tp_ymax - min(df$total_path_length, na.rm = TRUE)
@@ -189,7 +161,7 @@ tp_brack  <- tp_ymax + tp_yrange * 0.06
 tp_tick   <- tp_yrange * 0.02
 tp_label  <- tp_brack + tp_yrange * 0.04
 #
-# 7b. Total path length plot
+# 6b. Total path length plot
 #
 p_total_path_length <- ggplot() +
   geom_jitter(
@@ -219,9 +191,9 @@ p_total_path_length <- ggplot() +
   theme_bw()
 p_total_path_length
 #
-# 8. Cell movement plot
+# 7. Cell movement plot
 #
-# 8a. Normalise position.x and position.y values
+# 7a. Normalise position.x and position.y values
 #
 collapsed <- collapsed |> 
   group_by(clone, replicate, tracking.id) |> 
@@ -232,9 +204,9 @@ collapsed <- collapsed |>
   ) |> 
   ungroup()
 #
-# 8b. Form track plot
+# 7b. Form track plot
 #
-# 8bi. Sample size per clone = 50
+# 7bi. Sample size per clone = 50
 #
 set.seed(42)
 #
@@ -247,13 +219,13 @@ sampled_ids <- collapsed |>
 df_sample <- collapsed |> 
   semi_join(sampled_ids, by = c("clone", "replicate", "tracking.id"))
 #
-# 8bii. Rename A and B to clone A and clone B for facet header
+# 7bii. Rename A and B to clone A and clone B for facet header
 #
 df_sample$clone <- factor(df_sample$clone,
                     levels = c("A", "B"),
                     labels = c("Clone A", "Clone B"))
 #
-# 8biii. Plot
+# 7biii. Plot
 #
 endpoints <- df_sample |> 
   group_by(clone, replicate, tracking.id) |> 
@@ -292,7 +264,7 @@ p_spaghetti <- ggplot() +
   theme_classic()
 p_spaghetti
 #
-# 9. Save all plots
+# 8. Save all plots
 #
 ggsave("project/figures/movement_morphology/mean.speed_plot.png", p_mean.speed, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement_morphology/final_displacement_plot.png", p_final_displacement, width = 4, height = 5, dpi = 300)

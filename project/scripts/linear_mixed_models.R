@@ -29,7 +29,7 @@ collapsed <- read_tsv('project/data/movement_morphology/livecyte_collapsed_filte
 #
 features <- c("dry.mass", "volume", "radius", "sphericity",
               "length.to.width.ratio", "mean.speed",
-              "total_path_length", "final_displacement")
+              "total_path_length", "final_displacement", "mean.thickness")
 #
 # 2b. Standardise dataset so all values are in standard deviation units- similar to Cohen's d
 #
@@ -67,6 +67,7 @@ results <- expand_grid(clone = unique(collapsed_scaled$clone), feature = feature
 # cloneA mean.speed            22.6   0.0000122   0.000195  0.0341  ***
 # cloneA total_path_length      5.19  0.0748      0.121     0.00782 
 # cloneA final_displacement     5.17  0.0755      0.121     0.00779 
+# cloneA mean.thickness         2.06  0.356       0.458     0.00311 **
 # cloneB dry.mass               9.19  0.0101      0.0323    0.0150  ***
 # cloneB volume                 9.19  0.0101      0.0323    0.0150  ***
 # cloneB radius                 7.58  0.0225      0.0515    0.0124  ***
@@ -75,6 +76,7 @@ results <- expand_grid(clone = unique(collapsed_scaled$clone), feature = feature
 # cloneB mean.speed            17.6   0.000148    0.00118   0.0289  ***
 # cloneB total_path_length      6.88  0.0320      0.0641    0.0113  ***
 # cloneB final_displacement     7.66  0.0217      0.0515    0.0125  ***
+# cloneB mean.thickness         0.893 0.640       0.677     0.00146 **
 #
 # Effect sizes are generally low, signifying that intereplicate variability only accounts for a small proportion of the variance in the data.
 #
@@ -131,7 +133,9 @@ lmm_results_plot <- ggplot(lmm_results, aes(x = feature, y = estimate)) +
   geom_hline(yintercept = 0, linetype = "solid", colour = "black", linewidth = 0.1) +
 theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_y_continuous(limits = c(-2, 2))
+lmm_results_plot
 #
 # 5. Save figure -----------------------------------------------------------
 #
 ggsave("project/figures/movement_morphology/lmm_results_plot.jpg", lmm_results_plot, width = 5, height = 4)
+

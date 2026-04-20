@@ -54,6 +54,7 @@ livecyte_pretty <- livecyte |>
     final_displacement = last(displacement), # As displacement is cumulative
     volume = mean(volume), # Mean over all frames for a single tracking.id within a clone and replicate
     radius = mean(radius),
+    mean.thickness = mean(mean.thickness),
     sphericity = mean(sphericity),
     length.to.width.ratio = mean(length.to.width),
     dry.mass = mean(dry.mass),
@@ -97,7 +98,7 @@ mean.speed_manual <- ggplot(manual, aes(x = mean.speed)) +
 ggplot() +
   geom_histogram(data = manual, aes(x = euclidean.distance), fill = "blue", alpha = 0.5, binwidth = 30) +
   geom_histogram(data = livecyte_matched, aes(x = final_displacement), fill = "red", alpha = 0.5, binwidth = 30) +
-  facet_wrap(~ cell.line)
+  facet_wrap(~cell.line)
 #
 # track.length and total_path_length
 ggplot() +
@@ -159,3 +160,4 @@ write_tsv(livecyte_collapsed_filtered, "project/data/movement_morphology/livecyt
 #
 # 7. Save the final filtered dataset with all frames -----------------
 write_tsv(livecyte_filtered, "project/data/movement_morphology/livecyte_filtered.tsv")
+

@@ -43,11 +43,11 @@ data.frame(PC = paste0("PC", 1:length(pve)), PVE = pve) |>
   ggplot(aes(x = PC, y = PVE)) +
   geom_bar(stat = "identity")
 #
-# We see that PC1, 2, and 3 explain ~78 of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less biologically interpretable
+# We see that PC1, 2, and 3 explain ~73% of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less biologically interpretable
 #
 # 4. Peform non-parametric statistical tests to determine the difference in Principle Components between the two clones
 #
-# 4a. Isolate the 3 most biologically interpretable PCs: PC1 largely represents morphology; PC2 mostly represents how far the cell moved and how much it meandered, but also seems to be correlated with length to width ratio and dry mass. As dry mass, volume, and total path length are not significantly different between the two clones, PC2 could be identifying debris: A high PC2 value could be a debris marker. PC3 largely represents movement, which is also correlated with other morphological parameters.
+# 4a. Isolate the 3 most biologically interpretable PCs: PC1 is largely loaded with all the morphological parameters, PC2 seems to be loaded with the movement parameters, which also seem highly correlated with cell morphology, and PC3 seems to be primarily loaded with final displacement and total path length, indicating 'meandering'.
 #
 PC1_PC2_PC3 <- pca_df |> 
   select(clone, PC1, PC2, PC3)
@@ -177,10 +177,11 @@ loadings_heatmap <- ggplot(loadings_long, aes(x = PC, y = feature, fill = loadin
   geom_tile(colour = "white") +
   geom_text(aes(label = round(loading, 2)), size = 3.2) +
   scale_fill_gradient2(low = "#ED7117", mid = "white", high = "#6F2DA8",
-                       midpoint = 0, limits = c(-0.6, 0.6)) +
+                       midpoint = 0, limits = c(-0.6, 0.7)) +
   labs(x = NULL, y = NULL, fill = "Loading") +
   theme_test() +
   theme(legend.position = "right")
+loadings_heatmap
 #
 # 7. Export all plots
 #
