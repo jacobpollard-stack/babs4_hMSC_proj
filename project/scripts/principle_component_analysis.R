@@ -1,7 +1,7 @@
 # ==============================================================================
 # Livecyte Data Analysis
 # - Statistical analysis and figures:
-# - Principle Component Analysis (PCA) and comparison with osteogenesis potential
+# - Principle Component Analysis (PCA)
 # ==============================================================================
 #
 # 1. Load libraries
@@ -51,7 +51,7 @@ data.frame(PC = paste0("PC", 1:length(pve)), PVE = pve) |>
 #
 # 4. Peform non-parametric statistical tests to determine the difference in Principle Components between the two clones
 #
-# 4a. Identify the 2 most biologically interpretable PCs: PC1 is largely loaded with all the morphological parameters, PC2 seems to be loaded with the movement parameters, which also seem highly correlated with cell morphology.
+# 4a. Identify the 2 most biologically interpretable PCs: PC1 is largely loaded with all the morphological parameters, PC2 seems to also largely be morphology-loaded, but also considers total path length and final displacement. Neither PCs are loaded on mean speed, but this was not significantly different between the clones, so this is not a concern.
 #
 # 4b. Perform Wilcoxon rank-sum test for each PC
 #
@@ -119,78 +119,6 @@ loadings_heatmap <- ggplot(loadings_long, aes(x = PC, y = feature, fill = loadin
   theme_test() +
   theme(legend.position = "right")
 loadings_heatmap
-#
-# 7. Comparison with osteogenesis data
-#
-# 7a. Average PC scores per clone-replicate
-#
-pc_rep <- pca_df |>
-  group_by(clone) |>
-  summarise(
-    PC1_mean = mean(PC1),
-    PC2_mean = mean(PC2),
-    PC3_mean = mean(PC3),
-    .groups = "drop"
-  )
-#
-# 7b. Calculate ALP activity as the difference in absorbance between day 8 in osteogenic medium and day 0, then average per clone-replicate
-#
-alp <- osteo |>
-  pivot_wider(names_from = day, values_from = absorption) |>
-  mutate(
-    alp_activity = `8osteo` - `0`,
-    replicate = as.numeric(replicate)
-  ) |>
-  select(clone, replicate, alp_activity)
-#
-# 7c. Join PC scores with ALP data
-#
-pc_alp <- pc_rep |>
-  left_join(alp, by = c("clone"))
-#
-# 7d. Correlation tests
-#
-cor_pc1 <- cor.test(pc_alp$PC1_mean, pc_alp$alp_activity)
-cor_pc2 <- cor.test(pc_alp$PC2_mean, pc_alp$alp_activity)
-cor_pc3 <- cor.test(pc_alp$PC3_mean, pc_alp$alp_activity)
-#
-# 7e. Plot PC1 vs ALP activity
-#
-p_pc1_alp <- ggplot(pc_alp, aes(x = PC1_mean, y = alp_activity, colour = clone)) +
-  geom_point(size = 3) +
-  geom_smooth(method = "lm", se = TRUE, colour = "grey40",
-              linetype = "dashed", aes(group = 1)) +
-  scale_colour_manual(values = c("A" = "#F8766D", "B" = "#00BFC4"),
-                      labels = c("Clone A", "Clone B")) +
-  annotate("text", x = Inf, y = Inf, hjust = 1.1, vjust = 1.5, size = 3.5,
-           label = paste0("r = ", round(cor_pc1$estimate, 3),
-                          "\np = ", round(cor_pc1$p.value, 4))) +
-  labs(
-    x = "Mean PC1 score",
-    y = expression("ALP activity (A"[405] * ")"),
-    colour = NULL
-  ) +
-  theme_bw()
-p_pc1_alp
-#
-# 7f. Plot PC2 vs ALP activity
-#
-p_pc2_alp <- ggplot(pc_alp, aes(x = PC2_mean, y = alp_activity, colour = clone)) +
-  geom_point(size = 3) +
-  geom_smooth(method = "lm", se = TRUE, colour = "grey40",
-              linetype = "dashed", aes(group = 1)) +
-  scale_colour_manual(values = c("A" = "#F8766D", "B" = "#00BFC4"),
-                      labels = c("Clone A", "Clone B")) +
-  annotate("text", x = Inf, y = Inf, hjust = 1.1, vjust = 1.5, size = 3.5,
-           label = paste0("r = ", round(cor_pc2$estimate, 3),
-                          "\np = ", round(cor_pc2$p.value, 4))) +
-  labs(
-    x = "Mean PC2 score",
-    y = expression("ALP activity (A"[405] * ")"),
-    colour = NULL
-  ) +
-  theme_test()
-p_pc2_alp
 #
 # 7. Export all plots
 #
