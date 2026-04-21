@@ -266,11 +266,12 @@ p_spaghetti
 #
 # 8. MSD plot
 #
-# 8a. Compute MSD per cell at each time lag
+# 8a. Compute MSD for each cell at each time lag
 #
-frame_interval <- 23 / 60
+frame_interval <- 23 / 60 # hours between each frame
 #
-max_lag <- 30
+max_lag_hours <- 96
+max_lag <- floor(max_lag_hours / (4 * frame_interval))  # ≈ 63 frames
 #
 msd_cell <- collapsed |>
   group_by(clone, replicate, tracking.id) |>
@@ -290,11 +291,11 @@ msd_cell <- collapsed |>
   }) |>
   ungroup()
 #
-# 8b. Convert lag from frames to real time
+# 8b. Convert lag to time in hours
 #
 msd_cell$time <- msd_cell$lag * frame_interval
 #
-# 8c. Summarise: replicate-level means, then clone-level mean ± SE
+# 8c. Summarise: replicate-level means, then clone-level mean plus and minus SE
 #
 msd_rep <- msd_cell |>
   group_by(clone, replicate, time) |>
@@ -308,11 +309,7 @@ msd_clone <- msd_rep |>
     .groups   = "drop"
   )
 #
-# 8d. Clone labels
-#
-msd_clone$clone <- factor(msd_clone$clone, levels = c("A", "B"))
-#
-# 8e. MSD plot (log–log scale)
+# 8d. MSD plot (log–log scale)
 #
 p_msd <- ggplot(msd_clone, aes(x = time, y = msd_grand, colour = clone, fill = clone)) +
   geom_ribbon(
@@ -320,38 +317,42 @@ p_msd <- ggplot(msd_clone, aes(x = time, y = msd_grand, colour = clone, fill = c
     alpha = 0.2, colour = NA
   ) +
   geom_line(linewidth = 0.8) +
-  # reference line for pure diffusion (slope = 1 on log-log)
-  geom_abline(
-    intercept = log10(msd_clone$msd_grand[msd_clone$time == min(msd_clone$time)][1]),
-    slope = 1,
-    linetype = "dashed", colour = "grey40", linewidth = 0.4
-  ) +
-  scale_colour_manual(values = clone_cols, labels = c("Clone A", "Clone B")) +
-  scale_fill_manual(values   = clone_fills, guide = "none") +
-  scale_x_log10() +
-  scale_y_log10() +
-  annotation_logticks(sides = "bl", size = 0.3) +
   labs(
-    x      = "Time lag (h)",
+    x      = expression(tau * " (h)"),
     y      = expression("MSD (" * mu * "m"^2 * ")"),
     colour = NULL
   ) +
+  scale_x_log10() + # I've chosen to use a log scale so our low-lag data is more visible, which is important for estimating alpha as it's more reliable due to having more data points
+  scale_y_log10() +
+  scale_colour_manual(values = clone_cols, labels = c("Clone A", "Clone B")) +
+  scale_fill_manual(values   = clone_fills, guide = "none") +
   theme_bw() +
-  theme(legend.position = c(0.15, 0.9))
+  theme(legend.position = c(0.15, 0.85)) +
+  annotation_logticks(sides = "bl", base = 10)
 p_msd
 #
-
-
-
-
-
-
-
-
+# 8e. Fit linear model to log–log data to estimate alpha
+#
+alpha_fits <- msd_clone |>
+  group_by(clone) |>
+  summarise(
+    fit = list(lm(log10(msd_grand) ~ log10(time))),
+    alpha = coef(fit[[1]])[2],
+    intercept = coef(fit[[1]])[1],
+    .groups = "drop"
+  )
+alpha_fits
+#
+# clone fit    alpha intercept
+#  1 A  <lm>    1.28      2.92
+#  2 B  <lm>    1.17      2.73
+#
+# The alpha values suggest that both clones exhibit superdiffusive behaviour (alpha > 1), with Clone A being slightly more superdiffusive than Clone B.
+#
 # 8. Save all plots
 #
 ggsave("project/figures/movement/mean.speed_plot.png", p_mean.speed, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/final_displacement_plot.png", p_final_displacement, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/total_path_length_plot.png", p_total_path_length, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/tracking_figure.png", p_spaghetti, width = 4, height = 5, dpi = 300)
-
+ggsave("project/figures/movement/msd_plot.png", p_msd, width = 6, height = 4, dpi = 300)
