@@ -322,13 +322,13 @@ p_msd <- ggplot(msd_clone, aes(x = time, y = msd_grand, colour = clone, fill = c
     y      = expression("MSD (" * mu * "m"^2 * ")"),
     colour = NULL
   ) +
-  scale_x_log10() + # I've chosen to use a log scale so our low-lag data is more visible, which is important for estimating alpha as it's more reliable due to having more data points
-  scale_y_log10() +
+  scale_x_log10(breaks = c(1, 10)) +
+  scale_y_log10() + # I've chosen to use a log scale so our low-lag data is more visible, which is important for estimating alpha as it's more reliable due to having more data points
   scale_colour_manual(values = clone_cols, labels = c("Clone A", "Clone B")) +
   scale_fill_manual(values   = clone_fills, guide = "none") +
   theme_bw() +
   theme(legend.position = c(0.15, 0.85)) +
-  annotation_logticks(sides = "bl", base = 10)
+  annotation_logticks(sides = "bl")
 p_msd
 #
 # 8e. Fit linear model to log–log data to estimate alpha
