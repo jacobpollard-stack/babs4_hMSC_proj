@@ -356,3 +356,4 @@ ggsave("project/figures/movement/final_displacement_plot.png", p_final_displacem
 ggsave("project/figures/movement/total_path_length_plot.png", p_total_path_length, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/tracking_figure.png", p_spaghetti, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/msd_plot.png", p_msd, width = 6, height = 4, dpi = 300)
+

@@ -1,7 +1,7 @@
 # ==============================================================================
 # Livecyte Data Analysis
 # - Statistical analysis and figures:
-# - Principle Component Analysis (PCA)
+# - Principle Component Analysis (PCA) and comparison with osteogenesis potential
 # ==============================================================================
 #
 # 1. Load libraries
@@ -9,10 +9,14 @@
 library(tidyverse)
 library(ggplot2)
 library(plotly)
+library(readxl)
 #
 # 2. Load data
 #
 metrics <- read_tsv('project/data/movement_morphology/livecyte_collapsed_filtered.tsv')
+#
+osteo <- read_xlsx("project/data/differentiation/osteogenesis_processed.xlsx") |> 
+  pivot_longer(cols = c("0", "8", "8osteo"), names_to = "day", values_to = "absorption") 
 #
 # 3. Principle Component Analysis (PCA)
 #
@@ -43,34 +47,26 @@ data.frame(PC = paste0("PC", 1:length(pve)), PVE = pve) |>
   ggplot(aes(x = PC, y = PVE)) +
   geom_bar(stat = "identity")
 #
-# We see that PC1, 2, and 3 explain ~73% of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less biologically interpretable
+# We see that PC1, 2, and 3 explain ~60% of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less biologically interpretable
 #
 # 4. Peform non-parametric statistical tests to determine the difference in Principle Components between the two clones
 #
-# 4a. Isolate the 3 most biologically interpretable PCs: PC1 is largely loaded with all the morphological parameters, PC2 seems to be loaded with the movement parameters, which also seem highly correlated with cell morphology, and PC3 seems to be primarily loaded with final displacement and total path length, indicating 'meandering'.
-#
-PC1_PC2_PC3 <- pca_df |> 
-  select(clone, PC1, PC2, PC3)
+# 4a. Identify the 2 most biologically interpretable PCs: PC1 is largely loaded with all the morphological parameters, PC2 seems to be loaded with the movement parameters, which also seem highly correlated with cell morphology.
 #
 # 4b. Perform Wilcoxon rank-sum test for each PC
 #
-wilcox_PC1 <- wilcox.test(PC1 ~ clone, data = PC1_PC2_PC3)
-wilcox_PC2 <- wilcox.test(PC2 ~ clone, data = PC1_PC2_PC3)
-wilcox_PC3 <- wilcox.test(PC3 ~ clone, data = PC1_PC2_PC3)
+wilcox_PC1 <- wilcox.test(PC1 ~ clone, data = pca_df)
+wilcox_PC2 <- wilcox.test(PC2 ~ clone, data = pca_df)
 #
 # 4c. Extract median values for each clone for each PC
 med_PC2_A <- median(pca_df$PC2[pca_df$clone == "A"])
 med_PC2_B <- median(pca_df$PC2[pca_df$clone == "B"])
 med_PC1_A <- median(pca_df$PC1[pca_df$clone == "A"])
 med_PC1_B <- median(pca_df$PC1[pca_df$clone == "B"])
-med_PC3_A <- median(pca_df$PC3[pca_df$clone == "A"])
-med_PC3_B <- median(pca_df$PC3[pca_df$clone == "B"])
 #
 # 5. Plot results with p-values
 #
-# 5a. PC2 on PC1
-#
-# 5ai. Build base plot with median points for each clone
+# 5a. PC2 on PC1: Build base plot with median points for each clone
 #
 PC2_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC2, colour = clone, alpha = clone)) +
   geom_point(size = 3) +
@@ -86,89 +82,30 @@ PC2_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC2, colour = clone, alpha = clo
 # Median point for clone B
   geom_point(aes(x = med_PC1_B, y = med_PC2_B), colour = "blue", fill = "blue", shape = 24, size = 3) +
 #
-# 5aii. Statistical labels
+# 5b. Statistical labels
 #
-  annotate("segment", x = -4.5, xend = -4.5, y = med_PC2_A, yend = med_PC2_B) +
-  annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC2_A, yend = med_PC2_A) +
-  annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC2_B, yend = med_PC2_B) +
-  annotate("text", x = -4.8, y = -0.1, label = "***", size = 4.5) +
+  annotate("segment", x = -4.1, xend = -4.1, y = med_PC2_A, yend = med_PC2_B) +
+  annotate("segment", x = -4.1, xend = -4.1 + 0.1, y = med_PC2_A, yend = med_PC2_A) +
+  annotate("segment", x = -4.1, xend = -4.1 + 0.1, y = med_PC2_B, yend = med_PC2_B) +
+  annotate("text", x = -4.4, y = -0.2, label = "***", size = 4.5) +
 #
-  annotate("segment", x = med_PC1_B, xend = med_PC1_A, y = -3.5) +
-  annotate("segment", x = med_PC1_B, y = -3.5, yend = -3.5 + 0.35) +
-  annotate("segment", x = med_PC1_A, y = -3.5, yend = -3.5 + 0.35) +
-  annotate("text", x = 0.1, y = -4, label = "***", size = 4.5)
-#
-# 5b. PC3 on PC1
-#
-# 5bi. Build base plot with median points for each clone
-#
-PC3_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC3, colour = clone, alpha = clone)) +
-  geom_point(size = 3) +
-  scale_alpha_manual(values = c("A" = 0.4, "B" = 0.25), guide = "none") +
-  labs(x = 'PC1',
-       y = 'PC3',
-       colour = "Clone") +
-  theme_test() +
-  stat_ellipse(level = 0.95, aes(fill = clone), alpha = 0, geom = "polygon", show.legend = FALSE) +
-  theme(legend.position = 'none') +
-  # Median point for clone A
-  geom_point(aes(x = med_PC1_A, y = med_PC3_A), fill = "red", colour = "red", shape = 24, size = 3) +
-  # Median point for clone B
-  geom_point(aes(x = med_PC1_B, y = med_PC3_B), colour = "blue", fill = "blue", shape = 24, size = 3) +
-#
-# 5bii. Statistical labels
-#
-  annotate("segment", x = -4.5, xend = -4.5, y = med_PC3_A, yend = med_PC3_B) +
-  annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC3_A, yend = med_PC3_A) +
-  annotate("segment", x = -4.5, xend = -4.5 + 0.1, y = med_PC3_B, yend = med_PC3_B) +
-  annotate("text", x = -4.8, y = 0, label = "***", size = 4.5) +
-  #
-  annotate("segment", x = med_PC1_B, xend = med_PC1_A, y = -3) +
-  annotate("segment", x = med_PC1_B, y = -3, yend = -3 + 0.2) +
-  annotate("segment", x = med_PC1_A, y = -3, yend = -3 + 0.2) +
-  annotate("text", x = 0.1, y = -3.3, label = "***", size = 4.5)
-#
-# 5c. PC3 on PC2
-#
-# 5ci. Build base plot with median points for each clone
-#
-PC3_PC2_plot <- ggplot(pca_df, aes(x = PC2, y = PC3, colour = clone, alpha = clone)) +
-  geom_point(size = 3) +
-  scale_alpha_manual(values = c("A" = 0.4, "B" = 0.25), guide = "none") +
-  labs(x = 'PC2',
-       y = 'PC3',
-       colour = "Clone") +
-  theme_test() +
-  stat_ellipse(level = 0.95, aes(fill = clone), alpha = 0, geom = "polygon", show.legend = FALSE) +
-  theme(legend.position = 'none') +
-  # Median point for clone A
-  geom_point(aes(x = med_PC2_A, y = med_PC3_A), fill = "red", colour = "red", shape = 24, size = 3) +
-  # Median point for clone B
-  geom_point(aes(x = med_PC2_B, y = med_PC3_B), colour = "blue", fill = "blue", shape = 24, size = 3) +
-#
-# 5bii. Statistical labels
-#
-  annotate("segment", x = -3.2, xend = -3.2, y = med_PC3_A, yend = med_PC3_B) +
-  annotate("segment", x = -3.2, xend = -3.2 + 0.1, y = med_PC3_A, yend = med_PC3_A) +
-  annotate("segment", x = -3.2, xend = -3.2 + 0.1, y = med_PC3_B, yend = med_PC3_B) +
-  annotate("text", x = -3.5, y = 0, label = "***", size = 4.5) +
-  #
-  annotate("segment", x = med_PC2_B, xend = med_PC2_A, y = -3) +
-  annotate("segment", x = med_PC2_B, y = -3, yend = -3 + 0.2) +
-  annotate("segment", x = med_PC2_A, y = -3, yend = -3 + 0.2) +
-  annotate("text", x = -0.15, y = -3.3, label = "***", size = 4.5)
+  annotate("segment", x = med_PC1_B, xend = med_PC1_A, y = -3.75) +
+  annotate("segment", x = med_PC1_B, y = -3.75, yend = -3.75 + 0.35) +
+  annotate("segment", x = med_PC1_A, y = -3.75, yend = -3.75 + 0.35) +
+  annotate("text", x = 0, y = -4.2, label = "***", size = 4.5)
+PC2_PC1_plot
 #
 # 6. Build a loadings plot to show which features contribute most to each PC
 #
-# 6a. Extract the loadings for the first 3 PCs
+# 6a. Extract the loadings for the first 2 PCs
 #
-loadings_mat <- pca_result$rotation[, 1:3]
+loadings_mat <- pca_result$rotation[, 1:2]
 #
 # 6b. Convert loadings to long format
 #
 loadings_long <- as.data.frame(loadings_mat) |>
   rownames_to_column("feature") |>
-  pivot_longer(cols = PC1:PC3, names_to = "PC", values_to = "loading") |>
+  pivot_longer(cols = PC1:PC2, names_to = "PC", values_to = "loading") |>
   mutate(feature = factor(feature, levels = rev(rownames(loadings_mat))))
 #
 # 6c. Plot loadings as a heatmap
@@ -183,9 +120,79 @@ loadings_heatmap <- ggplot(loadings_long, aes(x = PC, y = feature, fill = loadin
   theme(legend.position = "right")
 loadings_heatmap
 #
+# 7. Comparison with osteogenesis data
+#
+# 7a. Average PC scores per clone-replicate
+#
+pc_rep <- pca_df |>
+  group_by(clone) |>
+  summarise(
+    PC1_mean = mean(PC1),
+    PC2_mean = mean(PC2),
+    PC3_mean = mean(PC3),
+    .groups = "drop"
+  )
+#
+# 7b. Calculate ALP activity as the difference in absorbance between day 8 in osteogenic medium and day 0, then average per clone-replicate
+#
+alp <- osteo |>
+  pivot_wider(names_from = day, values_from = absorption) |>
+  mutate(
+    alp_activity = `8osteo` - `0`,
+    replicate = as.numeric(replicate)
+  ) |>
+  select(clone, replicate, alp_activity)
+#
+# 7c. Join PC scores with ALP data
+#
+pc_alp <- pc_rep |>
+  left_join(alp, by = c("clone"))
+#
+# 7d. Correlation tests
+#
+cor_pc1 <- cor.test(pc_alp$PC1_mean, pc_alp$alp_activity)
+cor_pc2 <- cor.test(pc_alp$PC2_mean, pc_alp$alp_activity)
+cor_pc3 <- cor.test(pc_alp$PC3_mean, pc_alp$alp_activity)
+#
+# 7e. Plot PC1 vs ALP activity
+#
+p_pc1_alp <- ggplot(pc_alp, aes(x = PC1_mean, y = alp_activity, colour = clone)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = TRUE, colour = "grey40",
+              linetype = "dashed", aes(group = 1)) +
+  scale_colour_manual(values = c("A" = "#F8766D", "B" = "#00BFC4"),
+                      labels = c("Clone A", "Clone B")) +
+  annotate("text", x = Inf, y = Inf, hjust = 1.1, vjust = 1.5, size = 3.5,
+           label = paste0("r = ", round(cor_pc1$estimate, 3),
+                          "\np = ", round(cor_pc1$p.value, 4))) +
+  labs(
+    x = "Mean PC1 score",
+    y = expression("ALP activity (A"[405] * ")"),
+    colour = NULL
+  ) +
+  theme_bw()
+p_pc1_alp
+#
+# 7f. Plot PC2 vs ALP activity
+#
+p_pc2_alp <- ggplot(pc_alp, aes(x = PC2_mean, y = alp_activity, colour = clone)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = TRUE, colour = "grey40",
+              linetype = "dashed", aes(group = 1)) +
+  scale_colour_manual(values = c("A" = "#F8766D", "B" = "#00BFC4"),
+                      labels = c("Clone A", "Clone B")) +
+  annotate("text", x = Inf, y = Inf, hjust = 1.1, vjust = 1.5, size = 3.5,
+           label = paste0("r = ", round(cor_pc2$estimate, 3),
+                          "\np = ", round(cor_pc2$p.value, 4))) +
+  labs(
+    x = "Mean PC2 score",
+    y = expression("ALP activity (A"[405] * ")"),
+    colour = NULL
+  ) +
+  theme_test()
+p_pc2_alp
+#
 # 7. Export all plots
 #
 ggsave('project/figures/PCA/pca_PC2_PC1_plot.png', PC2_PC1_plot, width = 5, height = 4)
-ggsave('project/figures/PCA/pca_PC3_PC1_plot.png', PC3_PC1_plot, width = 5, height = 4)
-ggsave('project/figures/PCA/pca_PC3_PC2_plot.png', PC3_PC2_plot, width = 5, height = 4)
 ggsave('project/figures/PCA/pca_loadings_heatmap.png', loadings_heatmap, width = 5, height = 3.75)
