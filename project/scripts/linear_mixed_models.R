@@ -1,19 +1,19 @@
-# ==========================================================================
+# ====================================================================
 # Livecyte Data Analysis
 # - Statistical analysis:
 # - Linear Mixed Models
-# ==========================================================================
+# ====================================================================
 #
 # We are performing a LMM to account for the statistical non-indepencence of the data for replicates within a clone. 
 #
-# 1. Load libraries --------------------------------------------------------
+# 1. Load libraries --------------------------------------------------
 #
-library(lme4)
-library(tidyverse)
-library(lmerTest)
-library(MuMIn)
+library(lme4) # for linear mixed models
+library(tidyverse) # for data manipulation and plotting
+library(lmerTest) # for p-values in LMMs
+library(MuMIn) # for R2 in LMMs
 #
-# 2. Load data and perform Cohen's d ---------------------------------------
+# 2. Load data and perform Cohen's d ---------------------------------
 #
 # 2a. Load livecyte_collaped_filtered dataset
 #
@@ -21,8 +21,7 @@ collapsed <- read_tsv('project/data/movement_morphology/livecyte_collapsed_filte
                       col_types = cols(
                         clone = col_factor(),
                         replicate = col_factor(),
-                        tracking.id = col_factor(),
-                        lineage.id = col_factor()
+                        tracking.id = col_factor()
                       ))
 #
 # 2c. Define features of the data
@@ -36,7 +35,7 @@ features <- c("dry.mass", "volume", "radius", "sphericity",
 collapsed_scaled <- collapsed |>
   mutate(across(all_of(features), ~ scale(.x)[,1]))
 #
-# 3. Kruskal-Wallace for independence ----------------------------------------------------------------------------
+# 3. Kruskal-Wallace testing -----------------------------------------
 #
 # We are interested in whether each parameter is independent between replicates within a clone.
 #
@@ -80,7 +79,7 @@ results <- expand_grid(clone = unique(collapsed_scaled$clone), feature = feature
 #
 # Effect sizes are generally low, signifying that intereplicate variability only accounts for a small proportion of the variance in the data.
 #
-# 4. Linear Mixed Models ---------------------------------------------------
+# 4. Linear Mixed Models ----------------------------------------------------------------------
 #
 # 4a. Fit LMM with clone as a fixed effect and replicate as a random effect, creating a table with all combinations of features and clones.
 #
@@ -135,7 +134,6 @@ theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_y_continuous(limits = c(-2, 2))
 lmm_results_plot
 #
-# 5. Save figure -----------------------------------------------------------
+# 5. Save figure -----------------------------------------------------
 #
 ggsave("project/figures/movement_morphology/lmm_results_plot.jpg", lmm_results_plot, width = 5, height = 4)
-

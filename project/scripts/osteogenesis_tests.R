@@ -1,28 +1,32 @@
-# ==========================================================================
+# ====================================================================
 # Osteogenesis Differentiation Data Analysis
-# ==========================================================================
+# ====================================================================
 #
-# 1. Load libraries --------------------------------------------------------
+# 1. Load libraries ----------------------------------------------------------------------
 #
-library(tidyverse)
-library(rcompanion)
-library(dunn.test)
-library(ggh4x)
+library(tidyverse) # for data manipulation and visualization
+library(rcompanion) # for the wilcoxon test
+library(dunn.test) # for post-hoc Dunn's test
+library(ggh4x) # for facet_wrap2
 #
-# 2. Load data -------------------------------------------------------------
+# 2. Load data -------------------------------------------------------
+#
+# 2a. Load osteogenesis data
 #
 osteo  <- read_xlsx("project/data/differentiation/osteogenesis_processed.xlsx")
+#
+# 2b. Load DNA concentration data
 #
 dna <- read_xlsx("project/data/differentiation/DNA_cell_lysates.xlsx",
                  col_types = c("text", "text", "numeric"))
 #
-# 3. Pivot longer ----------------------------------------------------------
+# 3. Pivot longer ----------------------------------------------------
 #
 osteo_long <- osteo |> 
   pivot_longer(cols = c("0", "8", "8osteo"), names_to = "day", values_to = "absorption") |> 
   mutate(day = as.factor(day))
 #
-# 4. Statistical tests -----------------------------------------------------
+# 4. Statistical tests -----------------------------------------------
 #
 # 4a. Clone A vs clone B at day 0
 #
@@ -81,7 +85,7 @@ wilcox_osteo_change <- wilcox.test(change ~ clone, data = osteo_change)
 #
 # The Wilcoxon rank-sun test shows no significant difference between the change in the two clone' absorption values between day 8 with osteogenic medium and day 8 control (p = 0.1). However, looking at the data, the difference between the clones is about 0.196, which is quite large.
 #
-# 5. Plot the osteogenesis data
+# 5. Plot the osteogenesis data --------------------------------------
 #
 # 5a. Rescale DNA axis to fit absorbance axis
 #
@@ -90,6 +94,7 @@ max_dna <- max(dna$conc, na.rm = TRUE)
 scale_factor <- max_abs / max_dna
 #
 # 5b. Change clones to make the facet titles nicer
+#
 osteo_long$clone <- factor(osteo_long$clone,
                            levels = c("A", "B"),
                            labels = c("Clone A", "Clone B"))
@@ -138,6 +143,6 @@ osteo_plot <- ggplot(osteo_long, aes(x = day)) +
         axis.text.x = element_text(colour = "#454644"))
 osteo_plot
 #
-# 6. Save plot
+# 6. Save plot -------------------------------------------------------
 #
 ggsave("project/figures/osteogenesis/osteo_plot.png", osteo_plot)

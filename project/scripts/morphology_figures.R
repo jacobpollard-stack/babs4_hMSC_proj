@@ -1,24 +1,22 @@
-# ==========================================================================
+# ====================================================================
 # Livecyte Data Analysis
 # - Movement figures:
 # - Mean speed violin + box plot
-# ==========================================================================
+# ====================================================================
 #
-# 1. Load libraries
+# 1. Load libraries --------------------------------------------------
 #
-library(lme4)
-library(lmerTest)
-library(ggplot2)
-library(emmeans)
-library(dplyr)
-library(patchwork)
-library(ggh4x)
+library(ggplot2) # plotting
+library(emmeans) # estimated marginal means (for LMM post-hoc tests)
+library(dplyr)  # data manipulation
+library(patchwork) # combining plots
+library(ggh4x) # for nested facet labels
 #
-# 2. Load data
+# 2. Load data -------------------------------------------------------
 #
-df <- read.delim('/Users/jacobpollard/Documents/Uni/Biology/Second year/Sem 2/BABS/babs4_hMSC_proj/project/data/movement_morphology/livecyte_collapsed_filtered.tsv')
+df <- read.delim('project/data/movement_morphology/livecyte_collapsed_filtered.tsv')
 #
-# 3. Define colours and summaries
+# 3. Define colours and summaries ------------------------------------
 #
 # We already have p-values from our LMM:
 #
@@ -50,7 +48,9 @@ df$clone     <- factor(df$clone, levels = c("A", "B"))
 df$replicate <- factor(df$replicate)
 df$clone_rep <- interaction(df$clone, df$replicate)
 #
-# 4. Calculate replicate means
+# 4. Calculate summaries ---------------------------------------------
+#
+# 4a. Replicate means
 #
 rep_means <- df |> 
   group_by(clone, replicate, clone_rep) |> 
@@ -64,7 +64,7 @@ rep_means <- df |>
     .groups = "drop"
   )
 #
-# 3d. Calculate clone means + summaries
+# 4b. Clone means + summaries
 #
 clone_summary <- rep_means |> 
   group_by(clone) |> 
@@ -78,11 +78,11 @@ clone_summary <- rep_means |>
     .groups = "drop"
   )
 #
-# 4. Plotting
+# 5. Plotting --------------------------------------------------------
 #
-# 4a. Volume
+# 5a. Volume
 #
-# 4ai. Define label positions
+# 5ai. Define label positions
 #
 v_ymax   <- max(df$volume, na.rm = TRUE)
 v_yrange <- v_ymax - min(df$volume, na.rm = TRUE)
@@ -90,7 +90,7 @@ v_brack  <- v_ymax + v_yrange * 0.06
 v_tick   <- v_yrange * 0.02
 v_label  <- v_brack + v_yrange * 0.04
 #
-# 4aii. Build plot
+# 5aii. Build plot
 #
 p_volume <- ggplot() +
   geom_jitter(
@@ -120,9 +120,9 @@ p_volume <- ggplot() +
   theme_bw()
 p_volume
 #
-# 4b. Radius
+# 5b. Radius
 #
-# 4bi. Define label positions
+# 5bi. Define label positions
 #
 r_ymax   <- max(df$radius, na.rm = TRUE)
 r_yrange <- r_ymax - min(df$radius, na.rm = TRUE)
@@ -130,7 +130,7 @@ r_brack  <- r_ymax + r_yrange * 0.06
 r_tick   <- r_yrange * 0.02
 r_label  <- r_brack + r_yrange * 0.04
 #
-# 4bii. Build plot
+# 5bii. Build plot
 #
 p_radius <- ggplot() +
   geom_jitter(
@@ -160,9 +160,9 @@ p_radius <- ggplot() +
   theme_bw()
 p_radius
 #
-# 4c. Sphericity
+# 5c. Sphericity
 #
-# 4ci. Define label positions
+# 5ci. Define label positions
 #
 s_ymax   <- max(df$sphericity, na.rm = TRUE)
 s_yrange <- s_ymax - min(df$sphericity, na.rm = TRUE)
@@ -170,7 +170,7 @@ s_brack  <- s_ymax + s_yrange * 0.06
 s_tick   <- s_yrange * 0.02
 s_label  <- s_brack + s_yrange * 0.04
 #
-# 4cii. Build plot
+# 5cii. Build plot
 #
 p_sphericity <- ggplot() +
   geom_jitter(
@@ -200,9 +200,9 @@ p_sphericity <- ggplot() +
   theme_bw()
 p_sphericity
 #
-# 4d. Length-to-width ratio
+# 5d. Length-to-width ratio
 #
-# 4di. Define label positions
+# 5di. Define label positions
 #
 lw_ymax   <- max(df$length.to.width.ratio, na.rm = TRUE)
 lw_yrange <- lw_ymax - min(df$length.to.width.ratio, na.rm = TRUE)
@@ -210,7 +210,7 @@ lw_brack  <- lw_ymax + lw_yrange * 0.06
 lw_tick   <- lw_yrange * 0.02
 lw_label  <- lw_brack + lw_yrange * 0.04
 #
-# 4dii. Build plot
+# 5dii. Build plot
 #
 p_ltwr <- ggplot() +
   geom_jitter(
@@ -240,9 +240,9 @@ p_ltwr <- ggplot() +
   theme_bw()
 p_ltwr
 #
-# 4e. Dry mass, mean thickness, and sphericity are all very very highly correlated, so we will represent this parameter simply as sphericity.
+# 5e. Dry mass, mean thickness, and sphericity are all very very highly correlated, as if they're 1:1 transformations, so we will represent this parameter simply as sphericity.
 #
-# 5. Save all plots
+# 6. Save all plots --------------------------------------------------
 #
 ggsave("project/figures/morphology/volume_plot.png", p_volume, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/morphology/radius_plot.png", p_radius, width = 4, height = 5, dpi = 300)

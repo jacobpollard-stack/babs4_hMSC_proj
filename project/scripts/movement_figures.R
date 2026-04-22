@@ -1,26 +1,24 @@
-# ==========================================================================
+# ====================================================================
 # Livecyte Data Analysis
 # - Movement figures:
 # - Mean speed violin + box plot
-# ==========================================================================
+# ====================================================================
 #
-# 1. Load libraries
+# 1. Load libraries --------------------------------------------------
 #
-library(lme4)
-library(lmerTest)
-library(ggplot2)
-library(emmeans)
-library(dplyr)
-library(patchwork)
-library(ggh4x)
+library(ggplot2) # for plotting
+library(emmeans) # for estimated marginal means
+library(dplyr) # for data manipulation
+library(patchwork) # for combining plots
+library(ggh4x) # for strip_themed in spaghetti plot
 #
-# 2. Load data
+# 2. Load data -------------------------------------------------------
 #
 df <- read.delim("project/data/movement_morphology/livecyte_collapsed_filtered.tsv")
 #
 collapsed <- read.delim('project/data/movement_morphology/livecyte_filtered.tsv')
 #
-# 3. Define colours and summaries
+# 3. Define colours and summaries ------------------------------------
 #
 # We already have p-values from our LMM:
 #
@@ -34,24 +32,26 @@ collapsed <- read.delim('project/data/movement_morphology/livecyte_filtered.tsv'
 # total_path_length      -0.122  0.114   -0.346    0.103    -1.06    4.07 0.347         0.00367        0.0179        0.0142         0.987 0.0142   0.347     ""   
 # final_displacement     -0.649  0.108   -0.860   -0.438    -6.02    3.75 0.00469       0.104          0.117         0.0126         0.890 0.0139   0.00937   "**" 
 #
-# 3ai. Define colour scheme
+# 3a. Define clone colour scheme
 #
 clone_cols   <- c("A" = "#F8766D", "B" = "#00BFC4")
 clone_fills  <- c("A" = "#F8766D", "B" = "#00BFC4")
 #
-# 3aii. Define replicate shades
+# 3b. Define replicate colours
 #
 rep_cols <- c(
   "A.1" = "#e8564a", "A.2" = "#F8766D", "A.3" = "#f9a090",
   "B.1" = "#009ea3", "B.2" = "#00BFC4", "B.3" = "#5dd9dd")
 #
-# 3b. Combine clone and replicate into a single variable
+# 3c. Combine clone and replicate into a single variable
 #
 df$clone     <- factor(df$clone, levels = c("A", "B"))
 df$replicate <- factor(df$replicate)
 df$clone_rep <- interaction(df$clone, df$replicate)
 #
-# 3c. Calculate replicate means
+# 4. Calculating means and summaries ---------------------------------
+#
+# 4a. Calculate replicate means
 #
 rep_means <- df |> 
   group_by(clone, replicate, clone_rep) |> 
@@ -62,7 +62,7 @@ rep_means <- df |>
     .groups = "drop"
   )
 #
-# 3d. Calculate clone means + summaries
+# 4b. Calculate clone means + summaries
 #
 clone_summary <- rep_means |> 
   group_by(clone) |> 
@@ -73,9 +73,9 @@ clone_summary <- rep_means |>
     .groups = "drop"
   )
 #
-# 4. Form mean speed plot
+# 5. Form mean speed plot
 #
-# 4a. Define label positions
+# 5a. Define label positions
 #
 ms_ymax   <- max(df$mean.speed, na.rm = TRUE)
 ms_yrange <- ms_ymax - min(df$mean.speed, na.rm = TRUE)
@@ -83,7 +83,7 @@ ms_brack  <- ms_ymax + ms_yrange * 0.06
 ms_tick   <- ms_yrange * 0.02
 ms_label  <- ms_brack + ms_yrange * 0.04
 #
-# 4b. Mean speed plot
+# 5b. Mean speed plot
 #
 p_mean.speed <- ggplot() +
   geom_jitter(
@@ -113,16 +113,18 @@ p_mean.speed <- ggplot() +
   theme_bw()
 p_mean.speed
 #
-# 5. Final displacement plot
+# 6. Final displacement plot -----------------------------------------
 #
-# 5a. Define label positions
+# 6a. Define label positions
+#
 fd_ymax   <- max(df$final_displacement, na.rm = TRUE)
 fd_yrange <- fd_ymax - min(df$final_displacement, na.rm = TRUE)
 fd_brack  <- fd_ymax + fd_yrange * 0.06
 fd_tick   <- fd_yrange * 0.02
 fd_label  <- fd_brack + fd_yrange * 0.04
 #
-# 5b. Final displacement plot
+# 6b. Final displacement plot
+#
 p_final_displacement <- ggplot() +
   geom_jitter(
     data = df,
@@ -151,9 +153,9 @@ p_final_displacement <- ggplot() +
   theme_bw()
 p_final_displacement
 #
-# 6. Total path length plot
+# 7. Total path length plot ------------------------------------------
 #
-# 6a. Define label positions
+# 7a. Define label positions
 #
 tp_ymax   <- max(df$total_path_length, na.rm = TRUE)
 tp_yrange <- tp_ymax - min(df$total_path_length, na.rm = TRUE)
@@ -161,7 +163,7 @@ tp_brack  <- tp_ymax + tp_yrange * 0.06
 tp_tick   <- tp_yrange * 0.02
 tp_label  <- tp_brack + tp_yrange * 0.04
 #
-# 6b. Total path length plot
+# 7b. Total path length plot
 #
 p_total_path_length <- ggplot() +
   geom_jitter(
@@ -191,9 +193,9 @@ p_total_path_length <- ggplot() +
   theme_bw()
 p_total_path_length
 #
-# 7. Cell movement plot
+# 8. Cell movement plot ----------------------------------------------
 #
-# 7a. Normalise position.x and position.y values
+# 8a. Normalise position.x and position.y values
 #
 collapsed <- collapsed |> 
   group_by(clone, replicate, tracking.id) |> 
@@ -204,9 +206,9 @@ collapsed <- collapsed |>
   ) |> 
   ungroup()
 #
-# 7b. Form track plot
+# 8b. Form track plot
 #
-# 7bi. Sample size per clone = 50
+# 8bi. Sample size per clone = 50
 #
 set.seed(42)
 #
@@ -219,13 +221,13 @@ sampled_ids <- collapsed |>
 df_sample <- collapsed |> 
   semi_join(sampled_ids, by = c("clone", "replicate", "tracking.id"))
 #
-# 7bii. Rename A and B to clone A and clone B for facet header
+# 8bii. Rename A and B to clone A and clone B for facet header
 #
 df_sample$clone <- factor(df_sample$clone,
                     levels = c("A", "B"),
                     labels = c("Clone A", "Clone B"))
 #
-# 7biii. Plot
+# 8biii. Plot
 #
 endpoints <- df_sample |> 
   group_by(clone, replicate, tracking.id) |> 
@@ -264,9 +266,9 @@ p_spaghetti <- ggplot() +
   theme_classic()
 p_spaghetti
 #
-# 8. MSD plot
+# 9. MSD plot --------------------------------------------------------
 #
-# 8a. Compute MSD for each cell at each time lag
+# 9a. Compute MSD for each cell at each time lag
 #
 frame_interval <- 23 / 60 # hours between each frame
 #
@@ -291,11 +293,11 @@ msd_cell <- collapsed |>
   }) |>
   ungroup()
 #
-# 8b. Convert lag to time in hours
+# 9b. Convert lag to time in hours
 #
 msd_cell$time <- msd_cell$lag * frame_interval
 #
-# 8c. Summarise: replicate-level means, then clone-level mean plus and minus SE
+# 9c. Summarise: replicate-level means, then clone-level mean plus and minus SE
 #
 msd_rep <- msd_cell |>
   group_by(clone, replicate, time) |>
@@ -309,7 +311,7 @@ msd_clone <- msd_rep |>
     .groups   = "drop"
   )
 #
-# 8d. MSD plot (log–log scale)
+# 9d. MSD plot (log–log scale)
 #
 p_msd <- ggplot(msd_clone, aes(x = time, y = msd_grand, colour = clone, fill = clone)) +
   geom_ribbon(
@@ -331,7 +333,7 @@ p_msd <- ggplot(msd_clone, aes(x = time, y = msd_grand, colour = clone, fill = c
   annotation_logticks(sides = "bl")
 p_msd
 #
-# 8e. Fit linear model to log–log data to estimate alpha
+# 9e. Fit linear model to log–log data to estimate alpha
 #
 alpha_fits <- msd_clone |>
   group_by(clone) |>
@@ -349,11 +351,10 @@ alpha_fits
 #
 # The alpha values suggest that both clones exhibit superdiffusive behaviour (alpha > 1), with Clone A being slightly more superdiffusive than Clone B.
 #
-# 8. Save all plots
+# 10. Save all plots -------------------------------------------------
 #
 ggsave("project/figures/movement/mean.speed_plot.png", p_mean.speed, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/final_displacement_plot.png", p_final_displacement, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/total_path_length_plot.png", p_total_path_length, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/tracking_figure.png", p_spaghetti, width = 4, height = 5, dpi = 300)
 ggsave("project/figures/movement/msd_plot.png", p_msd, width = 6, height = 4, dpi = 300)
-

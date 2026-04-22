@@ -1,24 +1,28 @@
-# ==============================================================================
+# ====================================================================
 # Livecyte Data Analysis
 # - Statistical analysis and figures:
 # - Principle Component Analysis (PCA)
-# ==============================================================================
+# ====================================================================
 #
-# 1. Load libraries
+# 1. Load libraries --------------------------------------------------
 #
-library(tidyverse)
-library(ggplot2)
-library(plotly)
-library(readxl)
+library(tidyverse) # for data manipulation and visualization
+library(ggplot2) # for plotting
+library(plotly) # for interactive plots
+library(readxl) # for reading Excel files
 #
-# 2. Load data
+# 2. Load data -------------------------------------------------------
+#
+# 2a. Load the filtered livecyte data
 #
 metrics <- read_tsv('project/data/movement_morphology/livecyte_collapsed_filtered.tsv')
+#
+# 2b. Load the osteogenesis data and pivot
 #
 osteo <- read_xlsx("project/data/differentiation/osteogenesis_processed.xlsx") |> 
   pivot_longer(cols = c("0", "8", "8osteo"), names_to = "day", values_to = "absorption") 
 #
-# 3. Principle Component Analysis (PCA)
+# 3. Principle Component Analysis (PCA) ------------------------------
 #
 # 3a. Select numeric columns for PCA and remove replicate and tracking.id, along with parameters that are non-biological
 #
@@ -35,7 +39,7 @@ pca_result <- prcomp(numeric_metrics, scale. = TRUE)
 pca_df <- as.data.frame(pca_result$x) |> 
   bind_cols(metrics |> select(-where(is.numeric)))
 #
-# 3d. Perform statistical tests to determine which PCs explain the most variance in the data
+# 3d. Perform statistical tests to determine which Principle Components (PCs) explain the most variance in the data
 #
 # 3di. Calculate the proportion of variance explained by each PC
 #
@@ -47,9 +51,9 @@ data.frame(PC = paste0("PC", 1:length(pve)), PVE = pve) |>
   ggplot(aes(x = PC, y = PVE)) +
   geom_bar(stat = "identity")
 #
-# We see that PC1, 2, and 3 explain ~60% of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less biologically interpretable
+# We see that PC1 and 2explain ~60% of the variance in the data, so we will focus on these three PCs for further analysis. PCs after this become less biologically interpretable
 #
-# 4. Peform non-parametric statistical tests to determine the difference in Principle Components between the two clones
+# 4. Peform non-parametric statistical tests to determine the difference in Principle Components between the two clones ------------
 #
 # 4a. Identify the 2 most biologically interpretable PCs: PC1 is largely loaded with all the morphological parameters, PC2 seems to also largely be morphology-loaded, but also considers total path length and final displacement. Neither PCs are loaded on mean speed, but this was not significantly different between the clones, so this is not a concern.
 #
@@ -59,12 +63,13 @@ wilcox_PC1 <- wilcox.test(PC1 ~ clone, data = pca_df)
 wilcox_PC2 <- wilcox.test(PC2 ~ clone, data = pca_df)
 #
 # 4c. Extract median values for each clone for each PC
+#
 med_PC2_A <- median(pca_df$PC2[pca_df$clone == "A"])
 med_PC2_B <- median(pca_df$PC2[pca_df$clone == "B"])
 med_PC1_A <- median(pca_df$PC1[pca_df$clone == "A"])
 med_PC1_B <- median(pca_df$PC1[pca_df$clone == "B"])
 #
-# 5. Plot results with p-values
+# 5. Plot results with p-values --------------------------------------
 #
 # 5a. PC2 on PC1: Build base plot with median points for each clone
 #
@@ -95,7 +100,7 @@ PC2_PC1_plot <- ggplot(pca_df, aes(x = PC1, y = PC2, colour = clone, alpha = clo
   annotate("text", x = 0, y = -4.2, label = "***", size = 4.5)
 PC2_PC1_plot
 #
-# 6. Build a loadings plot to show which features contribute most to each PC
+# 6. Build a loadings plot to show which features contribute most to each PC --------------------------------------------------------------
 #
 # 6a. Extract the loadings for the first 2 PCs
 #
@@ -120,7 +125,7 @@ loadings_heatmap <- ggplot(loadings_long, aes(x = PC, y = feature, fill = loadin
   theme(legend.position = "right")
 loadings_heatmap
 #
-# 7. Export all plots
+# 7. Export all plots ------------------------------------------------
 #
 ggsave('project/figures/PCA/pca_PC2_PC1_plot.png', PC2_PC1_plot, width = 5, height = 4)
 ggsave('project/figures/PCA/pca_loadings_heatmap.png', loadings_heatmap, width = 5, height = 3.75)

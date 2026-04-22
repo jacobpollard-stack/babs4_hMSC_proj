@@ -5,10 +5,11 @@
 #
 # 1. Load libraries --------------------------------------------------
 #
-library(tidyverse)
-library(readxl)
+library(tidyverse) # For data manipulation and visualisation
+library(readxl) # For reading Excel files
 #
 # 2. Load data -------------------------------------------------------
+#
 # 2a. Load the livecyte automatic dataset
 #
 livecyte <- read_tsv("project/data/movement_morphology/livecyte_data.tsv",
@@ -29,7 +30,8 @@ manual <- read_tsv("project/data/movement_morphology/manual_data.tsv",
                    ))
 #
 # 2c. Load my TID vs tracking.id dataset; created manually by matching the TIDs from the manual dataset to the tracking.ids from the livecyte dataset, using euclidean distance plus/minus error bounds.
-tid_mapping <- read_csv("project/data/movement_morphology/TID_to_trackingid.csv",
+#
+tid_mapping <- read_csv('project/data/movement_morphology/TID_to_trackingid.csv',
                         col_types = cols(
                           clone = col_factor(),
                           replicate = col_factor(),
@@ -62,16 +64,19 @@ livecyte_pretty <- livecyte |>
     .groups = "drop") # Drop groups after summarising
 #
 # 3aii. Remove mean.speed NaN objects, which are likely debris, as they have no speed (eg. tracked only for one frame)
+#
 livecyte_pretty <- livecyte_pretty |> 
   filter(!is.na(mean.speed))
 #
-# 3b. Now we have a dataset with one row for tracking.id, we can filter it based on the manual dataset.
+# 3b. Now we have a dataset with one row for each tracking.id, we can filter it based on the manual dataset.
 #
 # 3bi. Filter livecyte_pretty so that it only contains tracking.ids found in tid_mapping, that have the respective clone and replicate.
+#
 livecyte_matched <- livecyte_pretty |> 
   inner_join(tid_mapping, by = c("clone", "replicate", "tracking.id"))
 #
 # 3bii. Plot the distribution of total_path_length, final_displacement, and mean_speed for the filtered dataset
+#
 total_path_length <- ggplot(livecyte_matched, aes(x = total_path_length)) +
   facet_wrap(~ clone) +
   geom_histogram(binwidth = 75)
@@ -83,6 +88,7 @@ mean.speed_livecyte <- ggplot(livecyte_matched, aes(x = mean.speed)) +
   geom_histogram(binwidth = 0.001)
 #
 # 3biii. Plot the distribution of track.length, euclidean.distance, and mean.speed for the manual dataset
+#
 track.length <- ggplot(manual, aes(x = track.length)) +
   facet_wrap(~ cell.line) +
   geom_histogram(binwidth = 150)
@@ -95,6 +101,7 @@ mean.speed_manual <- ggplot(manual, aes(x = mean.speed)) +
 # 
 # 3biv. Overlay distributions to see if they are similar
 # final_displacement and euclidean.distance
+#
 ggplot() +
   geom_histogram(data = manual, aes(x = euclidean.distance), fill = "blue", alpha = 0.5, binwidth = 30) +
   geom_histogram(data = livecyte_matched, aes(x = final_displacement), fill = "red", alpha = 0.5, binwidth = 30) +
@@ -113,9 +120,14 @@ ggplot() +
   facet_wrap(~ cell.line)
 #
 # Based on the distributions, the metrics for the cells in cloneA seems to be more likely to deviate from the manual dataset. This suggests that the tracking is less accurate for cloneA.
+# In theory, the distributions should be near identical, but the livecyte dataset contains a lot of debris and the manual dataset is very small, so we won't be able to use it to filter the livecyte data.
 #
-# 4. Downstream data filtering ----------------------------------------------------------------------
+# 4. Downstream data filtering ---------------------------------------
+#
 # 4a. Create a list of parameters to filter on
+#
+# These are arbitrary parameters that I have chosen based on the distributions of the livecyte dataset
+#
 filter_params <- list(
   n_frames = 5,
   total_path_length = 100,
@@ -129,6 +141,7 @@ filter_params <- list(
 )
 #
 # 4b. Filter the dataset based on these parameters
+#
 livecyte_collapsed_filtered <- livecyte_pretty |> 
   filter(
     n_frames >= filter_params$n_frames &
@@ -142,22 +155,15 @@ livecyte_collapsed_filtered <- livecyte_pretty |>
     mean.speed >= filter_params$mean.speed
   )
 #
-# 4c. Change cloneA and cloneB to simply A and B to make figure legends nicer
-#
-livecyte_collapsed_filtered <- livecyte_collapsed_filtered |> 
-  mutate(clone = recode(clone, "cloneA" = "A", "cloneB" = "B"))
-#
-livecyte <- livecyte |> 
-  mutate(clone = recode(clone, "cloneA" = "A", "cloneB" = "B"))
-#
 # 5. Only keep tracking.ids in the livecyte dataset that are found in our new filtered dataset ---------------------------------------------
+#
 livecyte_filtered <- livecyte |>
   semi_join(livecyte_collapsed_filtered, by = c("clone", "replicate", "tracking.id"))
-  
 #
-# 6. Save the final filtered dataset ----------------------------------------------------------------------
+# 6. Save the final filtered dataset ---------------------------------
+#
 write_tsv(livecyte_collapsed_filtered, "project/data/movement_morphology/livecyte_collapsed_filtered.tsv")
 #
 # 7. Save the final filtered dataset with all frames -----------------
+#
 write_tsv(livecyte_filtered, "project/data/movement_morphology/livecyte_filtered.tsv")
-
