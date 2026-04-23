@@ -2,6 +2,7 @@
 # Livecyte Data Analysis
 # - Statistical analysis and figures:
 # - Principle Component Analysis (PCA)
+# Please turn on Soft Wrap in your code editor to view the full code without horizontal scrolling.
 # ====================================================================
 #
 # 1. Load libraries --------------------------------------------------

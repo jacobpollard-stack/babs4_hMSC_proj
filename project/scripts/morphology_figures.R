@@ -1,7 +1,7 @@
 # ====================================================================
 # Livecyte Data Analysis
-# - Movement figures:
-# - Mean speed violin + box plot
+# - Morphology figures
+# Please turn on Soft Wrap in your code editor to view the full code without horizontal scrolling.
 # ====================================================================
 #
 # 1. Load libraries --------------------------------------------------

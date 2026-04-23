@@ -2,6 +2,7 @@
 # Livecyte Data Analysis
 # - Statistical analysis:
 # - Linear Mixed Models
+# Please turn on Soft Wrap in your code editor to view the full code without horizontal scrolling.
 # ====================================================================
 #
 # We are performing a LMM to account for the statistical non-indepencence of the data for replicates within a clone. 

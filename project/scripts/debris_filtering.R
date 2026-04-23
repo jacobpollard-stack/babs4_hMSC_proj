@@ -1,6 +1,7 @@
 # ====================================================================
 # Livecyte Data Analysis
 # - Data assembling, tidying, and debris filtering
+# Please turn on Soft Wrap in your code editor to view the full code without horizontal scrolling.
 # ====================================================================
 #
 # 1. Load libraries --------------------------------------------------
@@ -68,6 +69,10 @@ livecyte_pretty <- livecyte |>
 livecyte_pretty <- livecyte_pretty |> 
   filter(!is.na(mean.speed))
 #
+# 3aiii. Save this collapsed dataset
+#
+write_tsv(livecyte_pretty, "project/data/movement_morphology/livecyte_collapsed.tsv")
+#
 # 3b. Now we have a dataset with one row for each tracking.id, we can filter it based on the manual dataset.
 #
 # 3bi. Filter livecyte_pretty so that it only contains tracking.ids found in tid_mapping, that have the respective clone and replicate.
@@ -99,8 +104,7 @@ mean.speed_manual <- ggplot(manual, aes(x = mean.speed)) +
   facet_wrap(~ cell.line) +
   geom_histogram(binwidth = 0.05)
 # 
-# 3biv. Overlay distributions to see if they are similar
-# final_displacement and euclidean.distance
+# 3biv. Overlay distributions to see if they are similar final_displacement and euclidean.distance
 #
 ggplot() +
   geom_histogram(data = manual, aes(x = euclidean.distance), fill = "blue", alpha = 0.5, binwidth = 30) +
@@ -119,8 +123,7 @@ ggplot() +
   geom_histogram(data = livecyte_matched, aes(x = mean.speed), fill = "red", alpha = 0.5, binwidth = 0.03) +
   facet_wrap(~ cell.line)
 #
-# Based on the distributions, the metrics for the cells in cloneA seems to be more likely to deviate from the manual dataset. This suggests that the tracking is less accurate for cloneA.
-# In theory, the distributions should be near identical, but the livecyte dataset contains a lot of debris and the manual dataset is very small, so we won't be able to use it to filter the livecyte data.
+# Based on the distributions, the metrics for the cells in cloneA seems to be more likely to deviate from the manual dataset. This suggests that the tracking is less accurate for cloneA. In theory, the distributions should be near identical, but the livecyte dataset contains a lot of debris and the manual dataset is very small, so we won't be able to use it to filter the livecyte data.
 #
 # 4. Downstream data filtering ---------------------------------------
 #

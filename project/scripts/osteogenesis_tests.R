@@ -1,5 +1,6 @@
 # ====================================================================
 # Osteogenesis Differentiation Data Analysis
+# Please turn on Soft Wrap in your code editor to view the full code without horizontal scrolling.
 # ====================================================================
 #
 # 1. Load libraries ----------------------------------------------------------------------
