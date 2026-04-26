@@ -213,7 +213,36 @@ report_table <- lmm_results |>
   ) |>
   select(feature, clone_A, clone_B, estimate = estimate, ci_95, df, p_adjusted, icc, marginal_r2)
 
-# feature               clone_A          clone_B          estimate ci_95               df p_adjusted    icc marginal_r2
+# Format p-values in non-scientific notation
+
+report_table <- report_table |>
+  mutate(p_adjusted = case_when(
+    p_adjusted == 0 ~ "2.2e-16",
+    TRUE ~ format(round(p_adjusted, 4), scientific = FALSE)
+  )) |> 
+  rename(`Clone A median (IQR)` = clone_A,
+         `Clone B median (IQR)` = clone_B,
+         `Estimate (SD units)` = estimate,
+         `95% CI` = ci_95,
+         `Degrees of freedom` = df,
+         `Adjusted p-value` = p_adjusted,
+         `ICC` = icc,
+         `Marginal R²` = marginal_r2,
+         `Feature` = feature) |>
+  mutate(Feature = case_when(
+    Feature == "dry.mass" ~ "Dry mass",
+    Feature == "volume" ~ "Volume",
+    Feature == "radius" ~ "Radius",
+    Feature == "sphericity" ~ "Sphericity",
+    Feature == "length.to.width.ratio" ~ "Aspect ratio",
+    Feature == "mean.speed" ~ "Mean speed",
+    Feature == "total_path_length" ~ "Total path length",
+    Feature == "final_displacement" ~ "Final displacement",
+    Feature == "mean.thickness" ~ "Mean thickness",
+    TRUE ~ Feature
+  ))
+
+#  feature               clone_A          clone_B          estimate ci_95               df p_adjusted    icc marginal_r2
 #  dry.mass              438.51 (169.29)  456.14 (168.87)    0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
 #  volume                1754.03 (677.15) 1824.57 (675.47)   0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
 #  radius                20.49 (3.72)     27.81 (5.57)       1.42   [1.31, 1.52]      3.74     0.0001 0.0038       0.498
@@ -222,7 +251,8 @@ report_table <- lmm_results |>
 #  mean.speed            0.33 (0.15)      0.27 (0.11)       -0.437  [-0.8, -0.07]     3.85     0.121  0.0467       0.046
 #  total_path_length     219.81 (192.73)  199.06 (163.43)   -0.122  [-0.35, 0.1]      4.07     0.347  0.0142       0.004
 #  final_displacement    129.62 (91.16)   90.98 (52.37)     -0.649  [-0.86, -0.44]    3.75     0.0084 0.0139       0.104
-#  mean.thickness        1.33 (0.16)      0.76 (0.16)       -1.79   [-1.84, -1.74] 1274        0      0            0.8  
+#  mean.thickness        1.33 (0.16)      0.76 (0.16)       -1.79   [-1.84, -1.74] 1274        0      0            0.8 
+
 
 # Figure for report ----------------------------------------------
 

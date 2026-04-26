@@ -1,0 +1,70 @@
+---
+title: Morphokinetic properties of mesenchymal stem cells as a predictor of differentiation potential
+author: "Y3948024"
+date: "`r Sys.Date()`"
+output:
+  bookdown::pdf_document2:
+    toc: false
+    fig_caption: true
+header-includes:
+  - \usepackage{caption}
+  - \captionsetup{labelfont=bf}
+  - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(lme4)
+library(tidyverse)
+library(lmerTest)
+library(MuMIn)
+library(kableExtra)
+```
+
+# Abstract
+
+# Introduction
+
+# Approach
+
+# Results
+
+## Cell morphology
+
+hMSC morphology was examined through Livecyte ptychographic quantitative phase imaging, allowing for the analysis of 9 cell morphology parameters. Fluorescence microscopy images were taken at 40x and 100x magnification to capture the diverse cytoskeletal morphologies of clones A and B (Figure 1). The images show that both clones demonstrate structural heterogeneity, with cell morphology ranging from longer spindle-like forms to flatter cobblestone-like forms. Clone A appeared to have a more elongated shape, with F-actin aligned more along the long axis of the cell, while clone B showed a more spread-out morphology with F-actin distributed more evenly throughout. Both clones exhibited intact nuclear morphology, as indicated by DAPI staining, suggesting that the cells were healthy and viable.
+
+```{r fluorescence-fig, out.width = "100%", fig.pos = "H", fig.cap = "\\textbf{Immunofluorescence microscopy shows heterogenous actin filament architecture of clone A and clone B hMSCs.} \\newline Immunofluorescence imaging at 40x and 100x magnification. Alexa-594-conjugated phalloidin (red, F-actin) and DAPI (blue, nuclear dsDNA). Scale bars: 100 $\\mu$m (40x), 50 $\\mu$m (100x)."}
+knitr::include_graphics("project/figures/fluorescence.png")
+```
+
+The differences in cell shape are reflected in Figure 2, which shows the quantitative and statistical analysis of cell volume, sphericity, radius, and aspect ratio (Figure 2A, B, C, and D, respectively). Thickness and sphericity were directly correlated ($\rho$ = 1), so only sphericity is reported; likewise with dry mass and volume. No significant difference in cell volume was discovered between clone A and clone B, however clone A had a significantly higher sphericity (median 0.26 vs 0.15, p < 0.0001) and aspect ratio (median 3.06 vs 1.8, p < 0.001) than clone B, indicating that clone A cells were more elongated and less flattened than clone B. Clone A also had a significantly smaller radius than clone B (20.49$\mu$m vs 27.81$\mu$m, p < 0.0001), which is consistent with the cobblestone morphology of clone B observed in the fluorescence images. These findings suggest that clone A and clone B hMSCs have distinct morphological properties, which may be related to their differentiation potential. Full statistical results are reported in Table 1.
+
+
+\newpage
+
+## Cell motility
+
+
+
+
+
+```{r build-table, include=FALSE}
+source("project/scripts/3.linear_mixed_models.R")
+```
+
+```{r table1, echo=FALSE}
+knitr::kable(report_table, 
+             caption = "Statistical summary of clone A and B morphokinetic features",
+             booktabs = TRUE) |>
+  kable_styling(font_size = 9, 
+                latex_options = c("hold_position", "scale_down")) |>
+  footnote(general = c(
+    "Estimates are from linear mixed models with clone as a fixed effect and replicate nested within clone as a random effect, expressed in SD units.",
+    "95\\\\% CI: Wald confidence interval. Degrees of Freedom: Satterthwaite denominator degrees of freedom.",
+    "P-values are Benjamini-Hochberg adjusted",
+    "ICC: Intraclass Correlation Coefficient for replicate. R²m: Marginal R².",
+    "Where p was calculated to be 0, it is reported as the R precision limit of 2.2e-16"
+  ))
+```
+
+

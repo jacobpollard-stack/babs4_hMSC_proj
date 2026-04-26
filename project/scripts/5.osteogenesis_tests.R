@@ -200,7 +200,7 @@ osteo_plot
 ggsave("project/figures/osteo_plot.png",
        plot = osteo_plot,
        width = 6, height = 4, units = "in",
-       dpi = dpi)
+       dpi = 300)
 
 
 # R version 4.4.1 (2024-06-14 ucrt) -- "Race for Your Life"

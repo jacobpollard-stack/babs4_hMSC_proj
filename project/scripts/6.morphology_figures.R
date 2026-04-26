@@ -28,9 +28,10 @@
 # cell values as jittered points coloured by replicate, replicate
 # means as diamonds, and clone-level mean + or - SE as crossbars.
 # Significance brackets with BH-adjusted p-values are added.
-# Dry mass, mean thickness, and sphericity are very highly correlated
+# Mean thickness, and sphericity are very highly correlated
 # (near 1:1 transformations), so we represent this group simply as
-# sphericity. Figures are saved to project/figures/morphology/.
+# sphericity. Likewise with dry.mass and volume.
+# Figures are saved to project/figures/morphology/.
 
 # ================================================================
 
