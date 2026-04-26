@@ -102,19 +102,14 @@ rep_means <- df |>
     .groups = "drop"
   )
 
-# Clone means + SE
-clone_summary <- rep_means |>
+# Clone means
+clone_summary <- df |>
   group_by(clone) |>
   summarise(
-    v_mean  = mean(volume),      v_se  = sd(volume) / sqrt(n()),
-    r_mean  = mean(radius),      r_se  = sd(radius) / sqrt(n()),
-    t_mean  = mean(mean_thickness), t_se = sd(mean_thickness) / sqrt(n()),
-    s_mean  = mean(sphericity),  s_se  = sd(sphericity) / sqrt(n()),
-    lw_mean = mean(length_to_width), lw_se = sd(length_to_width) / sqrt(n()),
-    dm_mean = mean(dry_mass),    dm_se = sd(dry_mass) / sqrt(n()),
-    .groups = "drop"
-  )
-
+    v_mean = mean(volume, na.rm = TRUE),
+    r_mean = mean(radius, na.rm = TRUE),
+    s_mean = mean(sphericity, na.rm = TRUE),
+    lw_mean = mean(length.to.width.ratio, na.rm = TRUE))
 
 # Volume plot ----------------------------------------------------
 
@@ -131,10 +126,10 @@ p_volume <- ggplot() +
     aes(x = clone, y = volume, colour = clone_rep),
     width = 0.25, size = 0.6, alpha = 0.35, shape = 16
   ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = v_mean, ymin = v_mean - v_se, ymax = v_mean + v_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
+  geom_boxplot(
+    data = df,
+    aes(x = clone, y = volume),
+    width = 0.3, outlier.shape = NA, alpha = 0.5, colour = "black", fill = NA
   ) +
   geom_point(
     data = rep_means,
@@ -153,7 +148,7 @@ p_volume <- ggplot() +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
-  labs(x = NULL, y = expression("Mean Volume (" * mu * "m"^3 * ")")) +
+  labs(x = NULL, y = expression("Volume (" * mu * "m"^3 * ")")) +
   theme_bw()
 p_volume
 
@@ -172,10 +167,10 @@ p_radius <- ggplot() +
     aes(x = clone, y = radius, colour = clone_rep),
     width = 0.25, size = 0.6, alpha = 0.35, shape = 16
   ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = r_mean, ymin = r_mean - r_se, ymax = r_mean + r_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
+  geom_boxplot(
+    data = df,
+    aes(x = clone, y = radius),
+    width = 0.3, outlier.shape = NA, alpha = 0.5, colour = "black", fill = NA
   ) +
   geom_point(
     data = rep_means,
@@ -194,7 +189,7 @@ p_radius <- ggplot() +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
-  labs(x = NULL, y = expression("Mean Radius (" * mu * "m)")) +
+  labs(x = NULL, y = expression("Radius (" * mu * "m)")) +
   theme_bw()
 p_radius
 
@@ -213,10 +208,10 @@ p_sphericity <- ggplot() +
     aes(x = clone, y = sphericity, colour = clone_rep),
     width = 0.25, size = 0.6, alpha = 0.35, shape = 16
   ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = s_mean, ymin = s_mean - s_se, ymax = s_mean + s_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
+  geom_boxplot(
+    data = df,
+    aes(x = clone, y = sphericity),
+    width = 0.3, outlier.shape = NA, alpha = 0.5, colour = "black", fill = NA
   ) +
   geom_point(
     data = rep_means,
@@ -231,7 +226,7 @@ p_sphericity <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = s_brack, yend = s_brack - s_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = s_label,
-           label = "p = 0.0000", size = 3.5) +
+           label = "p < 0.00001", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
@@ -254,10 +249,10 @@ p_ltwr <- ggplot() +
     aes(x = clone, y = length.to.width.ratio, colour = clone_rep),
     width = 0.25, size = 0.6, alpha = 0.35, shape = 16
   ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = lw_mean, ymin = lw_mean - lw_se, ymax = lw_mean + lw_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
+  geom_boxplot(
+    data = df,
+    aes(x = clone, y = length.to.width.ratio),
+    width = 0.3, outlier.shape = NA, alpha = 0.5, colour = "black", fill = NA
   ) +
   geom_point(
     data = rep_means,
@@ -276,38 +271,28 @@ p_ltwr <- ggplot() +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
-  labs(x = NULL, y = "Length-to-width ratio") +
+  labs(x = NULL, y = "Aspect ratio") +
   theme_bw()
 p_ltwr
 
 # Dry mass, mean thickness, and sphericity are all very highly
-# correlated, as if they're 1:1 transformations, so we represent
+# correlated, as if they're 1:1 transformations, so we'll represent
 # this parameter simply as sphericity.
 
 
 # Save all plots -------------------------------------------------
 
-units <- "in"
-fig_w <- 4
-fig_h <- 5
-dpi <- 300
-device <- "png"
-
 ggsave("project/figures/morphology/volume_plot.png",
-       plot = p_volume, device = device,
-       width = fig_w, height = fig_h, units = units, dpi = dpi)
+       plot = p_volume, width = 4, height = 5, dpi = 300)
 
 ggsave("project/figures/morphology/radius_plot.png",
-       plot = p_radius, device = device,
-       width = fig_w, height = fig_h, units = units, dpi = dpi)
+       plot = p_radius, width = 4, height = 5, dpi = 300)
 
 ggsave("project/figures/morphology/sphericity_plot.png",
-       plot = p_sphericity, device = device,
-       width = fig_w, height = fig_h, units = units, dpi = dpi)
+       plot = p_sphericity, width = 4, height = 5, dpi = 300)
 
 ggsave("project/figures/morphology/length_to_width_plot.png",
-       plot = p_ltwr, device = device,
-       width = fig_w, height = fig_h, units = units, dpi = dpi)
+       plot = p_ltwr, width = 4, height = 5, dpi = 300)
 
 
 # R version 4.4.1 (2024-06-14 ucrt) -- "Race for Your Life"

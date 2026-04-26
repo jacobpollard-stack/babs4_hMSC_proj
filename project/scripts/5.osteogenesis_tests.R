@@ -197,18 +197,9 @@ osteo_plot
 
 # Save plot ------------------------------------------------------
 
-units <- "in"
-fig_w <- 7
-fig_h <- 5
-dpi <- 300
-device <- "png"
-
-ggsave("project/figures/osteogenesis/osteo_plot.png",
+ggsave("project/figures/osteo_plot.png",
        plot = osteo_plot,
-       device = device,
-       width = fig_w,
-       height = fig_h,
-       units = units,
+       width = 6, height = 4, units = "in",
        dpi = dpi)
 
 

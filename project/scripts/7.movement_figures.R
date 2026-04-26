@@ -104,13 +104,13 @@ rep_means <- livecyte_collapsed_filtered |>
     .groups = "drop"
   )
 
-# Clone means + SE
+# Clone means
 clone_summary <- rep_means |>
   group_by(clone) |>
   summarise(
-    ms_mean = mean(mean_speed), ms_se = sd(mean_speed) / sqrt(n()),
-    fd_mean = mean(final_disp), fd_se = sd(final_disp) / sqrt(n()),
-    tp_mean = mean(total_path), tp_se = sd(total_path) / sqrt(n()),
+    ms_mean = mean(mean_speed),
+    fd_mean = mean(final_disp),
+    tp_mean = mean(total_path),
     .groups = "drop"
   )
 
@@ -129,10 +129,10 @@ p_mean.speed <- ggplot() +
     aes(x = clone, y = mean.speed, colour = clone_rep),
     width = 0.25, size = 0.6, alpha = 0.35, shape = 16
   ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = ms_mean, ymin = ms_mean - ms_se, ymax = ms_mean + ms_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
+  geom_boxplot(
+    data = livecyte_collapsed_filtered,
+    aes(x = clone, y = mean.speed),
+    width = 0.3, outlier.shape = NA, alpha = 0.5, colour = "black", fill = NA
   ) +
   geom_point(
     data = rep_means,
@@ -171,10 +171,10 @@ p_final_displacement <- ggplot() +
     aes(x = clone, y = final_displacement, colour = clone_rep),
     width = 0.25, size = 0.6, alpha = 0.35, shape = 16
   ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = fd_mean, ymin = fd_mean - fd_se, ymax = fd_mean + fd_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
+  geom_boxplot(
+    data = livecyte_collapsed_filtered,
+    aes(x = clone, y = final_displacement),
+    width = 0.3, outlier.shape = NA, alpha = 0.5, colour = "black", fill = NA
   ) +
   geom_point(
     data = rep_means,
@@ -213,10 +213,10 @@ p_total_path_length <- ggplot() +
     aes(x = clone, y = total_path_length, colour = clone_rep),
     width = 0.25, size = 0.6, alpha = 0.35, shape = 16
   ) +
-  geom_crossbar(
-    data = clone_summary,
-    aes(x = clone, y = tp_mean, ymin = tp_mean - tp_se, ymax = tp_mean + tp_se),
-    width = 0.3, fatten = 1.5, linewidth = 0.4, colour = "black", fill = NA
+  geom_boxplot(
+    data = livecyte_collapsed_filtered,
+    aes(x = clone, y = total_path_length),
+    width = 0.3, outlier.shape = NA, alpha = 0.5, colour = "black", fill = NA
   ) +
   geom_point(
     data = rep_means,
@@ -396,6 +396,7 @@ alpha_fits <- msd_clone |>
   )
 alpha_fits
 
+
 # clone fit    alpha intercept
 #  1 A  <lm>    1.28      2.92
 #  2 B  <lm>    1.17      2.73
@@ -407,29 +408,25 @@ alpha_fits
 
 # Save all plots -------------------------------------------------
 
-units <- "in"
-dpi <- 300
-device <- "png"
-
 ggsave("project/figures/movement/mean.speed_plot.png",
-       plot = p_mean.speed, device = device,
-       width = 4, height = 5, units = units, dpi = dpi)
+       plot = p_mean.speed,
+       width = 4, height = 5, dpi = 300)
 
 ggsave("project/figures/movement/final_displacement_plot.png",
-       plot = p_final_displacement, device = device,
-       width = 4, height = 5, units = units, dpi = dpi)
+       plot = p_final_displacement,
+       width = 4, height = 5, dpi = 300)
 
 ggsave("project/figures/movement/total_path_length_plot.png",
-       plot = p_total_path_length, device = device,
-       width = 4, height = 5, units = units, dpi = dpi)
+       plot = p_total_path_length,
+       width = 4, height = 5, dpi = 300)
 
-ggsave("project/figures/movement/tracking_figure.png",
-       plot = p_spaghetti, device = device,
-       width = 4, height = 5, units = units, dpi = dpi)
+ggsave("project/figures/movement/tracking_plot.png",
+       plot = p_spaghetti,
+       width = 4, height = 5, dpi = 300)
 
 ggsave("project/figures/movement/msd_plot.png",
-       plot = p_msd, device = device,
-       width = 6, height = 4, units = units, dpi = dpi)
+       plot = p_msd,
+       width = 6, height = 4, dpi = 300)
 
 
 # R version 4.4.1 (2024-06-14 ucrt) -- "Race for Your Life"

@@ -109,6 +109,17 @@ med_PC1_B <- median(pca_df$PC1[pca_df$clone == "B"])
 med_PC2_A <- median(pca_df$PC2[pca_df$clone == "A"])
 med_PC2_B <- median(pca_df$PC2[pca_df$clone == "B"])
 
+# Print table
+wilcox_results <- data.frame(
+  PC = c("PC1", "PC2"),
+  W_statistic = c(wilcox_PC1$statistic, wilcox_PC2$statistic),
+  p_value = c(wilcox_PC1$p.value, wilcox_PC2$p.value)
+)
+
+#    PC W_statistic       p_value
+# 1 PC1       19525 1.205451e-171 ***
+# 2 PC2      308054  2.979280e-57 ***
+
 
 # PC scatter plot ------------------------------------------------
 
@@ -180,23 +191,53 @@ loadings_heatmap <- ggplot(loadings_long,
 loadings_heatmap
 
 
-# Save plots -----------------------------------------------------
+# Form tables: heatmap and eigenvalues ---------------------------
+# Eigenvalue table with cumulative PVE
+eigenvalues <- data.frame(
+  PC = paste0("PC", 1:length(pve)),
+  Eigenvalue = pca_result$sdev^2,
+  PVE = pve,
+  Cumulative_PVE = cumsum(pve)
+)
 
-units <- "in"
-dpi <- 300
-device <- "png"
+#    PC               Eigenvalue                      PVE Cumulative_PVE
+# 1 PC1 3.5399519471701079709192 0.3933279941300122373171      0.3933280
+# 2 PC2 2.1301946288960880160346 0.2366882920995654615570      0.6300163
+# 3 PC3 1.4149022799486257184753 0.1572113644387362896282      0.7872277
+# 4 PC4 0.9847795954441642685140 0.1094199550493516470695      0.8966476
+# 5 PC5 0.4825982219523353711210 0.0536220246613706291727      0.9502696
+# 6 PC6 0.4194026411794403719213 0.0466002934643822905314      0.9968699
+# 7 PC7 0.0223610494343173780984 0.0024845610482574879974      0.9993545
+# 8 PC8 0.0058096359749143632739 0.0006455151083238184909      1.0000000
+# 9 PC9 0.0000000000000009329195 0.0000000000000001036577      1.0000000
+
+# Loadings table
+loadings_table <- as.data.frame(pca_result$rotation) |>
+  rownames_to_column("feature")
+
+#                 feature        PC1         PC2          PC3          PC4         PC5          PC6         PC7          PC8                 PC9
+# 1     total_path_length -0.0224438  0.27731701  0.660762798 -0.149508082  0.07976352  0.675798330  0.02353065 -0.003481241  0.0000000012150229
+# 2    final_displacement -0.1553618  0.33327458  0.519393348 -0.287756681  0.02027058 -0.715156571 -0.01890038 -0.000612830 -0.0000000021029236
+# 3                volume  0.3013308  0.52764905 -0.238589206 -0.006580453  0.08786772  0.006661912  0.21742678 -0.137035048  0.7071067780343606
+# 4                radius  0.5173716  0.10538402  0.021058920 -0.048657001 -0.14656513 -0.010747742 -0.82878805  0.099615933  0.0000000015254501
+# 5        mean.thickness -0.4162659  0.33990449 -0.244299842  0.042250458  0.31717274  0.067986639 -0.19681439  0.711170489  0.0000000176663845
+# 6            sphericity -0.4930595  0.15795929 -0.172953520  0.011551093  0.27003046  0.069838592 -0.42173082 -0.668015037 -0.0000000173379300
+# 7 length.to.width.ratio -0.3051793  0.32111047 -0.009539523  0.354534085 -0.82180828  0.043756921 -0.02613254 -0.001343327 -0.0000000003782267
+# 8              dry.mass  0.3013308  0.52764905 -0.238589207 -0.006580454  0.08786772  0.006661915  0.21742679 -0.137035012 -0.7071067843387340
+# 9            mean.speed -0.1287078 -0.02218922 -0.299405483 -0.874514935 -0.32775025  0.142229181  0.01936350  0.022307261  0.0000000019028748
+
+
+# Save plots -----------------------------------------------------
 
 ggsave("project/figures/PCA/pca_PC2_PC1_plot.png",
        plot = PC2_PC1_plot,
-       device = device,
        width = 5, height = 4,
-       units = units, dpi = dpi)
+       dpi = 300)
 
 ggsave("project/figures/PCA/pca_loadings_heatmap.png",
        plot = loadings_heatmap,
-       device = device,
-       width = 5, height = 3.75,
-       units = units, dpi = dpi)
+       width = 5, height = 4,
+       dpi = 300)
 
 
 # R version 4.4.1 (2024-06-14 ucrt) -- "Race for Your Life"

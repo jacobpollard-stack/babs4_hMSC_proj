@@ -79,6 +79,20 @@ livecyte_collapsed_filtered_scaled <- livecyte_collapsed_filtered |>
 # variability is a concern that needs to be accounted for in the
 # statistical model
 
+# Form table of the medians and IQRs for each feature within
+# each clone and replicate
+df_sum <- livecyte_collapsed_filtered |>
+  group_by(clone) |>
+  summarise(across(all_of(features), list(median = median, IQR = IQR)),
+            rm.na = TRUE) |> 
+  ungroup()
+
+# Perform Kruskal-Wallis tests for each feature within each clone, and
+# calculate epsilon-squared effect sizes. A higher epsilon-squared value 
+# indicates that a larger proportion of the variance in the data is due 
+# to differences between replicates, which would suggest that 
+# inter-replicate variability is a concern that needs to be accounted 
+# for in the statistical model. 
 results <- expand_grid(
   clone = unique(livecyte_collapsed_filtered_scaled$clone),
   feature = features
@@ -172,6 +186,43 @@ lmm_results <- lmm_results |>
     )
   )
 
+# Add 95% confidence intervals
+lmm_results <- lmm_results |>
+  mutate(ci_95 = paste0("[", round(ci_lower, 2), ", ", round(ci_upper, 2), "]"))
+
+# Print table only including feature, clone A median, clone B median, estimate, 95% CI, df, p-adj, ICC, and R2M
+report_table <- lmm_results |>
+  left_join(
+    df_sum |>
+      pivot_longer(-clone, names_to = c("feature", ".value"), names_sep = "_(?=(median|IQR)$)") |>
+      pivot_wider(names_from = clone, values_from = c(median, IQR),
+                  names_glue = "{clone}_{.value}") |>
+      mutate(
+        clone_A = paste0(round(A_median, 2), " (", round(A_IQR, 2), ")"),
+        clone_B = paste0(round(B_median, 2), " (", round(B_IQR, 2), ")")
+      ) |>
+      select(feature, clone_A, clone_B),
+    by = "feature"
+  ) |>
+  mutate(
+    ci_95 = paste0("[", round(ci_lower, 2), ", ", round(ci_upper, 2), "]"),
+    df = round(df, 2),
+    p_adjusted = round(p_adjusted, 4),
+    icc = round(icc, 4),
+    marginal_r2 = round(marginal_r2, 3)
+  ) |>
+  select(feature, clone_A, clone_B, estimate = estimate, ci_95, df, p_adjusted, icc, marginal_r2)
+
+# feature               clone_A          clone_B          estimate ci_95               df p_adjusted    icc marginal_r2
+#  dry.mass              438.51 (169.29)  456.14 (168.87)    0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
+#  volume                1754.03 (677.15) 1824.57 (675.47)   0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
+#  radius                20.49 (3.72)     27.81 (5.57)       1.42   [1.31, 1.52]      3.74     0.0001 0.0038       0.498
+#  sphericity            0.26 (0.04)      0.15 (0.03)       -1.75   [-1.8, -1.7]   1274        0      0            0.766
+#  length.to.width.ratio 3.06 (1.32)      1.8 (0.46)        -1.31   [-1.48, -1.13]    3.98     0.0003 0.0148       0.421
+#  mean.speed            0.33 (0.15)      0.27 (0.11)       -0.437  [-0.8, -0.07]     3.85     0.121  0.0467       0.046
+#  total_path_length     219.81 (192.73)  199.06 (163.43)   -0.122  [-0.35, 0.1]      4.07     0.347  0.0142       0.004
+#  final_displacement    129.62 (91.16)   90.98 (52.37)     -0.649  [-0.86, -0.44]    3.75     0.0084 0.0139       0.104
+#  mean.thickness        1.33 (0.16)      0.76 (0.16)       -1.79   [-1.84, -1.74] 1274        0      0            0.8  
 
 # Figure for report ----------------------------------------------
 
@@ -191,19 +242,9 @@ lmm_results_plot
 
 # Save figure ----------------------------------------------------
 
-units <- "in"
-fig_w <- 5
-fig_h <- 4
-dpi <- 300
-device <- "png"
-
 ggsave("project/figures/lmm_results_plot.png",
-       plot = lmm_results_plot,
-       device = device,
-       width = fig_w,
-       height = fig_h,
-       units = units,
-       dpi = dpi)
+       lmm_results_plot, width = 6, height = 4, units = "in",
+       dpi = 300)
 
 
 # R version 4.4.1 (2024-06-14 ucrt) -- "Race for Your Life"
