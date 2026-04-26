@@ -7,7 +7,7 @@ output: word_document
 
 ## Including Plots
 
-You can also embed plots, for example:
+You can also embed plots, for example:bh
 
 ```{r pressure, echo=FALSE}
 plot(pressure)
