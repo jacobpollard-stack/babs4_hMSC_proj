@@ -213,7 +213,7 @@ report_table <- lmm_results |>
   ) |>
   select(feature, clone_A, clone_B, estimate = estimate, ci_95, df, p_adjusted, icc, marginal_r2)
 
-# Format p-values in non-scientific notation
+# Format p-values in non-scientific notation and rename parameters for the table
 
 report_table <- report_table |>
   mutate(p_adjusted = case_when(
@@ -225,9 +225,9 @@ report_table <- report_table |>
          `Estimate (SD units)` = estimate,
          `95% CI` = ci_95,
          `Degrees of freedom` = df,
-         `Adjusted p-value` = p_adjusted,
          `ICC` = icc,
          `Marginal R²` = marginal_r2,
+         `Adjusted p-value` = p_adjusted,
          `Feature` = feature) |>
   mutate(Feature = case_when(
     Feature == "dry.mass" ~ "Dry mass",

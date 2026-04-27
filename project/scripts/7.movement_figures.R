@@ -66,9 +66,10 @@ livecyte_data_filtered <- read.delim(
 # LMM p-values for annotation -----------------------------------
 
 # These are BH-adjusted p-values from the LMM analysis in script 3:
-#   mean.speed:          p = 0.129
-#   total_path_length:   p = 0.347
-#   final_displacement:  p = 0.00937  **
+#  feature               clone_A          clone_B          estimate ci_95               df p_adjusted    icc marginal_r2
+#  mean.speed            0.33 (0.15)      0.27 (0.11)       -0.437  [-0.8, -0.07]     3.85     0.121  0.0467       0.046
+#  total_path_length     219.81 (192.73)  199.06 (163.43)   -0.122  [-0.35, 0.1]      4.07     0.347  0.0142       0.004
+#  final_displacement    129.62 (91.16)   90.98 (52.37)     -0.649  [-0.86, -0.44]    3.75     0.0084 0.0139       0.104
 
 
 # Define colours -------------------------------------------------
@@ -147,7 +148,7 @@ p_mean.speed <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = ms_brack, yend = ms_brack - ms_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = ms_label,
-           label = "p = 0.081", size = 3.5) +
+           label = "ns", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
@@ -189,7 +190,7 @@ p_final_displacement <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = fd_brack, yend = fd_brack - fd_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = fd_label,
-           label = "p = 0.00469", size = 3.5) +
+           label = "**", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
@@ -231,7 +232,7 @@ p_total_path_length <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = tp_brack, yend = tp_brack - tp_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = tp_label,
-           label = "p = 0.347", size = 3.5) +
+           label = "ns", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 10) +

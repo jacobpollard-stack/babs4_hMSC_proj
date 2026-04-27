@@ -62,12 +62,13 @@ df <- read.delim(
 # LMM p-values for annotation -----------------------------------
 
 # These are BH-adjusted p-values from the LMM analysis in script 3:
-#   volume:                p = 0.279
-#   radius:                p = 0.0000923  ***
-#   sphericity:            p = 0.0000     ***
-#   length.to.width.ratio: p = 0.000339   ***
-#   dry.mass:              p = 0.279
-#   mean.thickness:        p = 0.0000     ***
+#  feature               clone_A          clone_B          estimate ci_95               df p_adjusted    icc marginal_r2
+#  dry.mass              438.51 (169.29)  456.14 (168.87)    0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
+#  volume                1754.03 (677.15) 1824.57 (675.47)   0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
+#  radius                20.49 (3.72)     27.81 (5.57)       1.42   [1.31, 1.52]      3.74     0.0001 0.0038       0.498
+#  sphericity            0.26 (0.04)      0.15 (0.03)       -1.75   [-1.8, -1.7]   1274        0      0            0.766
+#  length.to.width.ratio 3.06 (1.32)      1.8 (0.46)        -1.31   [-1.48, -1.13]    3.98     0.0003 0.0148       0.421
+#  mean.thickness        1.33 (0.16)      0.76 (0.16)       -1.79   [-1.84, -1.74] 1274        0      0            0.8 
 
 
 # Define colours -------------------------------------------------
@@ -112,6 +113,13 @@ clone_summary <- df |>
     s_mean = mean(sphericity, na.rm = TRUE),
     lw_mean = mean(length.to.width.ratio, na.rm = TRUE))
 
+
+# Calculate Pearson correlations between parameters to check for redundancy
+cor_matrix <- df |>
+  select(volume, radius, mean.thickness, sphericity, length.to.width.ratio, dry.mass) |>
+  cor(use = "pairwise.complete.obs")
+cor_matrix
+
 # Volume plot ----------------------------------------------------
 
 # Label positions for significance bracket
@@ -145,7 +153,7 @@ p_volume <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = v_brack, yend = v_brack - v_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = v_label,
-           label = "p = 0.279", size = 3.5) +
+           label = "ns", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
@@ -186,7 +194,7 @@ p_radius <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = r_brack, yend = r_brack - r_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = r_label,
-           label = "p = 0.0000923", size = 3.5) +
+           label = "****", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
@@ -227,7 +235,7 @@ p_sphericity <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = s_brack, yend = s_brack - s_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = s_label,
-           label = "p < 0.00001", size = 3.5) +
+           label = "****", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
@@ -268,7 +276,7 @@ p_ltwr <- ggplot() +
   annotate("segment", x = 2, xend = 2,
            y = lw_brack, yend = lw_brack - lw_tick, linewidth = 0.4) +
   annotate("text", x = 1.5, y = lw_label,
-           label = "p = 0.000339", size = 3.5) +
+           label = "***", size = 3.5) +
   scale_colour_manual(values = rep_cols, guide = "none") +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
