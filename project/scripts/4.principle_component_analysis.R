@@ -117,8 +117,8 @@ wilcox_results <- data.frame(
 )
 
 #    PC W_statistic       p_value
-# 1 PC1       19525 1.205451e-171 ***
-# 2 PC2      308054  2.979280e-57 ***
+# 1 PC1       19525 1.205451e-171 ****
+# 2 PC2      308054  2.979280e-57 ****
 
 
 # PC scatter plot ------------------------------------------------
@@ -152,8 +152,8 @@ PC2_PC1_plot <- ggplot(pca_df,
   annotate("segment",
            x = -4.1, xend = -4.1 + 0.1,
            y = med_PC2_B, yend = med_PC2_B) +
-  annotate("text", x = -4.4, y = -0.2,
-           label = "***", size = 4.5) +
+  annotate("text", x = -4.5, y = -0.3,
+           label = "****", size = 4.5) +
   # PC1 significance bracket (horizontal, bottom)
   annotate("segment",
            x = med_PC1_B, xend = med_PC1_A, y = -3.75) +
@@ -162,7 +162,7 @@ PC2_PC1_plot <- ggplot(pca_df,
   annotate("segment",
            x = med_PC1_A, y = -3.75, yend = -3.75 + 0.35) +
   annotate("text", x = 0, y = -4.2,
-           label = "***", size = 4.5)
+           label = "****", size = 4.5)
 PC2_PC1_plot
 
 
@@ -184,10 +184,12 @@ loadings_heatmap <- ggplot(loadings_long,
   geom_tile(colour = "white") +
   geom_text(aes(label = round(loading, 2)), size = 3.2) +
   scale_fill_gradient2(low = "#ED7117", mid = "white", high = "#6F2DA8",
-                       midpoint = 0, limits = c(-0.6, 0.7)) +
+                       midpoint = 0, limits = c(-0.7, 0.7)) +
   labs(x = NULL, y = NULL, fill = "Loading") +
   theme_test() +
-  theme(legend.position = "right")
+  theme(legend.position = "right") +
+  scale_y_discrete(labels = c(
+    "Mean Speed", "Dry Mass", "Aspect Ratio", "Sphericity", "Mean Thickness", "Radius", "Volume", "Final Displacement", "Total Path Length"))
 loadings_heatmap
 
 

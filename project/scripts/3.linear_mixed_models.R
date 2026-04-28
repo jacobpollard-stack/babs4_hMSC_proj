@@ -179,6 +179,7 @@ lmm_results <- lmm_results |>
   mutate(
     p_adjusted = p.adjust(p_value, method = "BH"),
     sig = case_when(
+      p_adjusted < 0.0001 ~ "****",
       p_adjusted < 0.001 ~ "***",
       p_adjusted < 0.01  ~ "**",
       p_adjusted < 0.05  ~ "*",
@@ -266,7 +267,9 @@ lmm_results_plot <- ggplot(lmm_results, aes(x = feature, y = estimate)) +
   labs(x = "Feature",
        y = "Effect of Clone (SD units)") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_y_continuous(limits = c(-2, 2))
+  scale_y_continuous(limits = c(-2, 2)) + # rename x axis
+  scale_x_discrete(labels = c(
+    "Dry mass", "Final Displacement", "Aspect Ratio", "Mean Speed", "Mean Thickness", "Radius", "Sphericity", "Total Path Length", "Volume"))
 lmm_results_plot
 
 
