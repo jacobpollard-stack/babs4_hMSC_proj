@@ -93,7 +93,7 @@ knitr::include_graphics('project/figures/PCA/PCA_figure.png')
 
 ### Osteogenic differentiation
 
-
+To assess the osteogenic differentiation potential of the two clones, cells were cultured in basal medium and osteogenic inductive medium for 8 days, and alkaline phosphatase (ALP) activity was measured via spectrophotometry as a marker of osteogenic differentiation (Figure 6). Concentration of DNA ($\mu$g mL$^{-1}$) was measured to control for cell number. ALP activity (A405) increased in both clones, with clone A showing a higher ALP signal after 8 days in osteogenic medium than clone B, with respect to cell number (mean $\Delta$ALP absorbance 0.367 AU vs 171 AU, $p$ = 0.1). Despite the low statistical significance due to the small sample size (n = 3), the change suggests that clone A had a higher osteogenic differentiation potential than clone B. Both clones showed increased DNA concentration over time, confirming that cells survived and proliferated on the new medium under both basal and osteogenic conditions.
 
 ```{r figure6, out.width = "75%", fig.pos = "H", fig.cap = "\\textbf{Alkaline phosphatase activity of clone A and clone B differed during osteogenic differentiation.} \\newline (Left y-axis; grey lines) Alkaline phosphatase activity measured via absorbance at 405nm (AU). Each line represents a technical replicate (n = 3). (Right y-axis; grey bars) Mean cell number measured via DNA concentration ($\\mu$g ml$^{-1}$). Measurements were taken at day 0, day 8 without osteogenic medium, and day 8 in osteogenic medium. "}
 knitr::include_graphics('project/figures/osteo_plot.png')

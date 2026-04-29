@@ -153,7 +153,7 @@ p_mean.speed <- ggplot() +
   scale_x_discrete(labels = c("Clone A", "Clone B")) +
   scale_y_continuous(n.breaks = 15) +
   labs(x = NULL,
-       y = expression("Mean speed (" * mu * "m s"^{-1} * ")")) +
+       y = expression("Mean speed (" * mu * "m min"^{-1} * ")")) +
   theme_bw()
 p_mean.speed
 
@@ -396,7 +396,6 @@ alpha_fits <- msd_clone |>
     .groups = "drop"
   )
 alpha_fits
-
 
 # clone fit    alpha intercept
 #  1 A  <lm>    1.28      2.92
