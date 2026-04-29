@@ -190,12 +190,48 @@ lmm_results <- lmm_results |>
 # Add 95% confidence intervals
 lmm_results <- lmm_results |>
   mutate(ci_95 = paste0("[", round(ci_lower, 2), ", ", round(ci_upper, 2), "]"))
+# Define display order and labels --------------------------------
+feature_order <- c("total_path_length", "final_displacement", "volume",
+                   "radius", "mean.thickness", "sphericity",
+                   "length.to.width.ratio", "dry.mass", "mean.speed")
 
-# Print table only including feature, clone A median, clone B median, estimate, 95% CI, df, p-adj, ICC, and R2M
+feature_labels <- c(
+  "total_path_length" = "Total Path\nLength",
+  "final_displacement" = "Final\nDisplacement",
+  "volume" = "Volume",
+  "radius" = "Radius",
+  "mean.thickness" = "Mean\nThickness",
+  "sphericity" = "Sphericity",
+  "length.to.width.ratio" = "Aspect\nRatio",
+  "dry.mass" = "Dry Mass",
+  "mean.speed" = "Mean Speed"
+)
+
+# Apply order to lmm_results for plotting
+lmm_results <- lmm_results |>
+  mutate(feature = factor(feature, levels = feature_order))
+
+# Figure for report ----------------------------------------------
+lmm_results_plot <- ggplot(lmm_results, aes(x = feature, y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) +
+  geom_text(aes(label = sig), vjust = -1.5) +
+  geom_hline(yintercept = 0, linetype = "solid", colour = "black",
+             linewidth = 0.1) +
+  scale_x_discrete(labels = feature_labels) +
+  scale_y_continuous(limits = c(-2, 2)) +
+  labs(x = "Feature", y = "Effect of Clone (SD units)") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+lmm_results_plot
+
+
+# Build report table ---------------------------------------------
 report_table <- lmm_results |>
   left_join(
     df_sum |>
-      pivot_longer(-clone, names_to = c("feature", ".value"), names_sep = "_(?=(median|IQR)$)") |>
+      pivot_longer(-clone, names_to = c("feature", ".value"),
+                   names_sep = "_(?=(median|IQR)$)") |>
       pivot_wider(names_from = clone, values_from = c(median, IQR),
                   names_glue = "{clone}_{.value}") |>
       mutate(
@@ -206,71 +242,51 @@ report_table <- lmm_results |>
     by = "feature"
   ) |>
   mutate(
+    feature = factor(feature, levels = feature_order),
+    estimate = round(estimate, 2),
     ci_95 = paste0("[", round(ci_lower, 2), ", ", round(ci_upper, 2), "]"),
     df = round(df, 2),
-    p_adjusted = round(p_adjusted, 4),
+    p_adjusted = case_when(
+      p_adjusted == 0 ~ "< 2.2e-16",
+      TRUE ~ format(round(p_adjusted, 4), scientific = FALSE)
+    ),
     icc = round(icc, 4),
-    marginal_r2 = round(marginal_r2, 3)
+    marginal_r2 = round(marginal_r2, 3),
+    feature = recode(feature,
+                     "total_path_length" = "Total Path Length",
+                     "final_displacement" = "Final Displacement",
+                     "volume" = "Volume",
+                     "radius" = "Radius",
+                     "mean.thickness" = "Mean Thickness",
+                     "sphericity" = "Sphericity",
+                     "length.to.width.ratio" = "Aspect Ratio",
+                     "dry.mass" = "Dry Mass",
+                     "mean.speed" = "Mean Speed"
+    )
   ) |>
-  select(feature, clone_A, clone_B, estimate = estimate, ci_95, df, p_adjusted, icc, marginal_r2)
+  arrange(feature) |>
+  select(
+    Feature = feature,
+    `Clone A median (IQR)` = clone_A,
+    `Clone B median (IQR)` = clone_B,
+    `Estimate (SD)` = estimate,
+    `95% CI` = ci_95,
+    `df` = df,
+    `p (adjusted)` = p_adjusted,
+    ICC = icc,
+    `R²m` = marginal_r2
+  )
 
-# Format p-values in non-scientific notation and rename parameters for the table
-
-report_table <- report_table |>
-  mutate(p_adjusted = case_when(
-    p_adjusted == 0 ~ "2.2e-16",
-    TRUE ~ format(round(p_adjusted, 4), scientific = FALSE)
-  )) |> 
-  rename(`Clone A median (IQR)` = clone_A,
-         `Clone B median (IQR)` = clone_B,
-         `Estimate (SD units)` = estimate,
-         `95% CI` = ci_95,
-         `Degrees of freedom` = df,
-         `ICC` = icc,
-         `Marginal R²` = marginal_r2,
-         `Adjusted p-value` = p_adjusted,
-         `Feature` = feature) |>
-  mutate(Feature = case_when(
-    Feature == "dry.mass" ~ "Dry mass",
-    Feature == "volume" ~ "Volume",
-    Feature == "radius" ~ "Radius",
-    Feature == "sphericity" ~ "Sphericity",
-    Feature == "length.to.width.ratio" ~ "Aspect ratio",
-    Feature == "mean.speed" ~ "Mean speed",
-    Feature == "total_path_length" ~ "Total path length",
-    Feature == "final_displacement" ~ "Final displacement",
-    Feature == "mean.thickness" ~ "Mean thickness",
-    TRUE ~ Feature
-  ))
-
-#  feature               clone_A          clone_B          estimate ci_95               df p_adjusted    icc marginal_r2
-#  dry.mass              438.51 (169.29)  456.14 (168.87)    0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
-#  volume                1754.03 (677.15) 1824.57 (675.47)   0.0995 [-0.04, 0.24]     3.3      0.275  0.0024       0.002
-#  radius                20.49 (3.72)     27.81 (5.57)       1.42   [1.31, 1.52]      3.74     0.0001 0.0038       0.498
-#  sphericity            0.26 (0.04)      0.15 (0.03)       -1.75   [-1.8, -1.7]   1274        0      0            0.766
-#  length.to.width.ratio 3.06 (1.32)      1.8 (0.46)        -1.31   [-1.48, -1.13]    3.98     0.0003 0.0148       0.421
-#  mean.speed            0.33 (0.15)      0.27 (0.11)       -0.437  [-0.8, -0.07]     3.85     0.121  0.0467       0.046
-#  total_path_length     219.81 (192.73)  199.06 (163.43)   -0.122  [-0.35, 0.1]      4.07     0.347  0.0142       0.004
-#  final_displacement    129.62 (91.16)   90.98 (52.37)     -0.649  [-0.86, -0.44]    3.75     0.0084 0.0139       0.104
-#  mean.thickness        1.33 (0.16)      0.76 (0.16)       -1.79   [-1.84, -1.74] 1274        0      0            0.8 
-
-
-# Figure for report ----------------------------------------------
-
-lmm_results_plot <- ggplot(lmm_results, aes(x = feature, y = estimate)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2) +
-  geom_text(aes(label = sig), vjust = -1.5) +
-  geom_hline(yintercept = 0, linetype = "solid", colour = "black",
-             linewidth = 0.1) +
-  theme_bw() +
-  labs(x = "Feature",
-       y = "Effect of Clone (SD units)") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_y_continuous(limits = c(-2, 2)) + # rename x axis
-  scale_x_discrete(labels = c(
-    "Dry mass", "Final Displacement", "Aspect Ratio", "Mean Speed", "Mean Thickness", "Radius", "Sphericity", "Total Path Length", "Volume"))
-lmm_results_plot
+# Feature            `Clone A median (IQR)` `Clone B median (IQR)` `Estimate (SD)` `95% CI`            df `p (adjusted)`    ICC `R²m`
+# Total Path Length  219.81 (192.73)        199.06 (163.43)                  -0.12 [-0.35, 0.1]      4.07 0.3471         0.0142 0.004
+# Final Displacement 129.62 (91.16)         90.98 (52.37)                    -0.65 [-0.86, -0.44]    3.75 0.0084         0.0139 0.104
+# Volume             1754.03 (677.15)       1824.57 (675.47)                  0.1  [-0.04, 0.24]     3.3  0.2750         0.0024 0.002
+# Radius             20.49 (3.72)           27.81 (5.57)                      1.42 [1.31, 1.52]      3.74 0.0001         0.0038 0.498
+# Mean Thickness     1.33 (0.16)            0.76 (0.16)                      -1.79 [-1.84, -1.74] 1274    < 2.2e-16      0      0.8  
+# Sphericity         0.26 (0.04)            0.15 (0.03)                      -1.75 [-1.8, -1.7]   1274    < 2.2e-16      0      0.766
+# Aspect Ratio       3.06 (1.32)            1.8 (0.46)                       -1.31 [-1.48, -1.13]    3.98 0.0003         0.0148 0.421
+# Dry Mass           438.51 (169.29)        456.14 (168.87)                   0.1  [-0.04, 0.24]     3.3  0.2750         0.0024 0.002
+# Mean Speed         0.33 (0.15)            0.27 (0.11)                      -0.44 [-0.8, -0.07]     3.85 0.1210         0.0467 0.046
 
 
 # Save figure ----------------------------------------------------
