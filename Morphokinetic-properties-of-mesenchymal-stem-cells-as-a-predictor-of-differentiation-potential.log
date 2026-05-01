@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  29 APR 2026 15:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  1 MAY 2026 13:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -578,37 +578,37 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 <project/figures/fluorescence.png, id=4, 60.225pt x 45.16875pt>
 File: project/figures/fluorescence.png Graphic file (type png)
 <use project/figures/fluorescence.png>
-Package pdftex.def Info: project/figures/fluorescence.png  used on input line 114.
+Package pdftex.def Info: project/figures/fluorescence.png  used on input line 116.
 (pdftex.def)             Requested size: 352.31625pt x 264.2636pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 114.
+(Font)              <10> on input line 116.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 114.
+(Font)              <7> on input line 116.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 114.
+(Font)              <5> on input line 116.
 [1
 
 {/Users/jacobpollard/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}]
 <project/figures/morphology/morphology_figure.png, id=20, 549.4929pt x 718.3638pt>
 File: project/figures/morphology/morphology_figure.png Graphic file (type png)
 <use project/figures/morphology/morphology_figure.png>
-Package pdftex.def Info: project/figures/morphology/morphology_figure.png  used on input line 120.
+Package pdftex.def Info: project/figures/morphology/morphology_figure.png  used on input line 122.
 (pdftex.def)             Requested size: 352.31625pt x 460.60625pt.
 [2{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc} <./project/figures/fluorescence.png>] [3 <./project/figures/morphology/morphology_figure.png>]
 <project/figures/movement/movement_figure.png, id=40, 481.3182pt x 655.9707pt>
 File: project/figures/movement/movement_figure.png Graphic file (type png)
 <use project/figures/movement/movement_figure.png>
-Package pdftex.def Info: project/figures/movement/movement_figure.png  used on input line 130.
+Package pdftex.def Info: project/figures/movement/movement_figure.png  used on input line 132.
 (pdftex.def)             Requested size: 352.31625pt x 480.15584pt.
 [4] [5 <./project/figures/movement/movement_figure.png>]
 <project/figures/lmm_results_plot.png, id=52, 433.62pt x 289.08pt>
 File: project/figures/lmm_results_plot.png Graphic file (type png)
 <use project/figures/lmm_results_plot.png>
-Package pdftex.def Info: project/figures/lmm_results_plot.png  used on input line 140.
+Package pdftex.def Info: project/figures/lmm_results_plot.png  used on input line 142.
 (pdftex.def)             Requested size: 352.31625pt x 234.89014pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 170.
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 170.
+(Font)              <9> on input line 172.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 172.
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -619,7 +619,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 <project/figures/PCA/PCA_figure.png, id=60, 722.7pt x 350.2686pt>
 File: project/figures/PCA/PCA_figure.png Graphic file (type png)
 <use project/figures/PCA/PCA_figure.png>
-Package pdftex.def Info: project/figures/PCA/PCA_figure.png  used on input line 180.
+Package pdftex.def Info: project/figures/PCA/PCA_figure.png  used on input line 182.
 (pdftex.def)             Requested size: 352.31625pt x 170.75659pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -628,7 +628,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 <project/figures/osteo_plot.png, id=73, 433.62pt x 289.08pt>
 File: project/figures/osteo_plot.png Graphic file (type png)
 <use project/figures/osteo_plot.png>
-Package pdftex.def Info: project/figures/osteo_plot.png  used on input line 220.
+Package pdftex.def Info: project/figures/osteo_plot.png  used on input line 222.
 (pdftex.def)             Requested size: 352.31625pt x 234.89014pt.
 [8] [9 <./project/figures/osteo_plot.png>] (./Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.aux)
  ***********
@@ -643,9 +643,9 @@ Here is how much of TeX's memory you used:
  42912 multiletter control sequences out of 15000+600000
  688515 words of font info for 89 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 89i,11n,93p,1632b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 89i,11n,93p,1924b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.pdf (9 pages, 5682352 bytes).
+Output written on Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.pdf (9 pages, 5684189 bytes).
 PDF statistics:
  189 PDF objects out of 1000 (max. 8388607)
  138 compressed objects within 2 object streams
