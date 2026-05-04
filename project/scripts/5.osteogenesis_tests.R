@@ -82,7 +82,7 @@ wilcox_AvB_day0 <- wilcox.test(absorption ~ clone,
 # absorption between clone A and clone B at day 0 (p = 0.077),
 # suggesting that the two clones have similar baseline absorption
 # levels before the introduction of osteogenic medium. However it
-# seems as this is due to low sample size (n = 3). |delta| ~ 0.05,
+# seems as this is due to low sample size (n = 3). Delta ~= 0.05,
 # which is quite large for this data. Thus it seems that the baseline
 # absorption is different between the clones, but the statistical
 # power to detect this difference is very low.
