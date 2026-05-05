@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.4.26)  4 MAY 2026 20:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.5.5)  5 MAY 2026 14:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -372,7 +372,7 @@ Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
 ) (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/bookmark/bookmark.sty
 Package: bookmark 2023-12-10 v1.31 PDF bookmarks (HO)
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
-Package: hyperref 2026-01-29 v7.01p Hypertext links for LaTeX
+Package: hyperref 2026-04-24 v7.01q Hypertext links for LaTeX
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
 ) (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
@@ -408,7 +408,7 @@ Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
 \Hy@linkcounter=\count327
 \Hy@pagecounter=\count328
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
-File: pd1enc.def 2026-01-29 v7.01p Hyperref: PDFDocEncoding definition (HO)
+File: pd1enc.def 2026-04-24 v7.01q Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
 ) (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
@@ -416,24 +416,24 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
 \Hy@SavedSpaceFactor=\count329
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
-File: puenc.def 2026-01-29 v7.01p Hyperref: PDF Unicode definition (HO)
+File: puenc.def 2026-04-24 v7.01q Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Option `unicode' set `true' on input line 4072.
-Package hyperref Info: Hyper figures OFF on input line 4201.
-Package hyperref Info: Link nesting OFF on input line 4206.
-Package hyperref Info: Hyper index ON on input line 4209.
-Package hyperref Info: Plain pages OFF on input line 4216.
-Package hyperref Info: Backreferencing OFF on input line 4221.
+Package hyperref Info: Option `unicode' set `true' on input line 4070.
+Package hyperref Info: Hyper figures OFF on input line 4199.
+Package hyperref Info: Link nesting OFF on input line 4204.
+Package hyperref Info: Hyper index ON on input line 4207.
+Package hyperref Info: Plain pages OFF on input line 4214.
+Package hyperref Info: Backreferencing OFF on input line 4219.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4468.
+Package hyperref Info: Bookmarks ON on input line 4466.
 \c@Hy@tempcnt=\count330
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 4807.
+LaTeX Info: Redefining \url on input line 4805.
 \XeTeXLinkMargin=\dimen272
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -443,20 +443,20 @@ Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
 \Fld@menulength=\count331
 \Field@Width=\dimen273
 \Fld@charsize=\dimen274
-Package hyperref Info: Hyper figures OFF on input line 6084.
-Package hyperref Info: Link nesting OFF on input line 6089.
-Package hyperref Info: Hyper index ON on input line 6092.
-Package hyperref Info: backreferencing OFF on input line 6099.
-Package hyperref Info: Link coloring OFF on input line 6104.
-Package hyperref Info: Link coloring with OCG OFF on input line 6109.
-Package hyperref Info: PDF/A mode OFF on input line 6114.
+Package hyperref Info: Hyper figures OFF on input line 6091.
+Package hyperref Info: Link nesting OFF on input line 6096.
+Package hyperref Info: Hyper index ON on input line 6099.
+Package hyperref Info: backreferencing OFF on input line 6106.
+Package hyperref Info: Link coloring OFF on input line 6111.
+Package hyperref Info: Link coloring with OCG OFF on input line 6116.
+Package hyperref Info: PDF/A mode OFF on input line 6121.
 \Hy@abspage=\count332
 \c@Item=\count333
 \c@Hfootnote=\count334
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
-File: hpdftex.def 2026-01-29 v7.01p Hyperref driver for pdfTeX
+File: hpdftex.def 2026-04-24 v7.01q Hyperref driver for pdfTeX
 \Fld@listcount=\count335
 \c@bookmark@seq@number=\count336
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
@@ -574,41 +574,42 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 LaTeX Font Info:    Trying to load font information for U+msb on input line 100.
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 113.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 113.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 113.
+[1
 
 {/Users/jacobpollard/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}]
-<project/figures/fluorescence.png, id=17, 60.225pt x 45.16875pt>
+<project/figures/fluorescence.png, id=16, 60.225pt x 45.16875pt>
 File: project/figures/fluorescence.png Graphic file (type png)
 <use project/figures/fluorescence.png>
-Package pdftex.def Info: project/figures/fluorescence.png  used on input line 118.
+Package pdftex.def Info: project/figures/fluorescence.png  used on input line 124.
 (pdftex.def)             Requested size: 352.31625pt x 264.2636pt.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 118.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 118.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 118.
-[2]
-<project/figures/morphology/morphology_figure.png, id=25, 549.4929pt x 718.3638pt>
+[2{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
+<project/figures/morphology/morphology_figure.png, id=26, 549.4929pt x 718.3638pt>
 File: project/figures/morphology/morphology_figure.png Graphic file (type png)
 <use project/figures/morphology/morphology_figure.png>
-Package pdftex.def Info: project/figures/morphology/morphology_figure.png  used on input line 124.
+Package pdftex.def Info: project/figures/morphology/morphology_figure.png  used on input line 130.
 (pdftex.def)             Requested size: 352.31625pt x 460.60625pt.
-[3{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc} <./project/figures/fluorescence.png>] [4 <./project/figures/morphology/morphology_figure.png>]
+[3{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc} <./project/figures/fluorescence.png>] [4 <./project/figures/morphology/morphology_figure.png>]
 <project/figures/movement/movement_figure.png, id=45, 481.3182pt x 655.9707pt>
 File: project/figures/movement/movement_figure.png Graphic file (type png)
 <use project/figures/movement/movement_figure.png>
-Package pdftex.def Info: project/figures/movement/movement_figure.png  used on input line 134.
+Package pdftex.def Info: project/figures/movement/movement_figure.png  used on input line 140.
 (pdftex.def)             Requested size: 352.31625pt x 480.15584pt.
 [5] [6 <./project/figures/movement/movement_figure.png>]
 <project/figures/lmm_results_plot.png, id=57, 433.62pt x 289.08pt>
 File: project/figures/lmm_results_plot.png Graphic file (type png)
 <use project/figures/lmm_results_plot.png>
-Package pdftex.def Info: project/figures/lmm_results_plot.png  used on input line 144.
+Package pdftex.def Info: project/figures/lmm_results_plot.png  used on input line 150.
 (pdftex.def)             Requested size: 352.31625pt x 234.89014pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 174.
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 174.
+(Font)              <9> on input line 180.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 180.
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
@@ -619,30 +620,30 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 <project/figures/PCA/PCA_figure.png, id=66, 722.7pt x 350.2686pt>
 File: project/figures/PCA/PCA_figure.png Graphic file (type png)
 <use project/figures/PCA/PCA_figure.png>
-Package pdftex.def Info: project/figures/PCA/PCA_figure.png  used on input line 184.
+Package pdftex.def Info: project/figures/PCA/PCA_figure.png  used on input line 190.
 (pdftex.def)             Requested size: 352.31625pt x 170.75659pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[8{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc} <./project/figures/PCA/PCA_figure.png>] [9] (./Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.aux)
+[8{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc} <./project/figures/PCA/PCA_figure.png>] [9] [10] (./Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 14359 strings out of 469339
- 230967 string characters out of 5465138
- 666039 words of memory out of 5000000
- 42905 multiletter control sequences out of 15000+600000
+ 14398 strings out of 469339
+ 232683 string characters out of 5465139
+ 667066 words of memory out of 5000000
+ 42942 multiletter control sequences out of 15000+600000
  692778 words of font info for 90 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 89i,11n,93p,3319b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 89i,11n,93p,2458b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.pdf (9 pages, 5589933 bytes).
+Output written on Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.pdf (10 pages, 5596334 bytes).
 PDF statistics:
- 200 PDF objects out of 1000 (max. 8388607)
- 148 compressed objects within 2 object streams
- 29 named destinations out of 1000 (max. 500000)
+ 204 PDF objects out of 1000 (max. 8388607)
+ 151 compressed objects within 2 object streams
+ 30 named destinations out of 1000 (max. 500000)
  122 words of extra memory for PDF output out of 10000 (max. 10000000)
 
