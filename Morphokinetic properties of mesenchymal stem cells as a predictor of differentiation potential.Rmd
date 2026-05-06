@@ -22,7 +22,7 @@ library(kableExtra)
 
 # Abstract
 
-
+Human mesenchymal stem cells (hMSCs) collected from the femoral head have a range of clinical applications, from the union of non-healing bone fractures to the treatment of diabetic neuropathy. hMSCs are a highly heterogenous population with varying differential potential, and the identification of high potency cells is critical in ensuring viable transplant. Current procedures to quantify hMSC differential potential are destructive, highly invasive, or require animal models; previous research demonstrate, however, that cytoskeletal architecture and gross cellular morphology may be a predictor of potency. Prior studies have primarily been qualitative or limited in capacity; in this study, we utilise high-throughput Livecyte ptychographic quantitative phase imaging to quantify 9 morphokinetic characteristics of two clones of hMSCs. Potency was assessed via alkaline phosphatase activity as a marker of early osteogenic differentiation. Our results suggest that high-potency cells exhibited a spindle morphology with parallel F-actin architecture, while low-potency cells exhibited a broader and flatter cobblestone-like morphology, with decreased exploratory movement and a dispersed F-actin network. Combined with machine learning trained on large datasets of characterised cells, this approach may offer fast and minimally-invasive quantification of stem cell potency, improving the clinical efficacy of hMSC therapies in regenerative medicine.
 
 \textbf{Word count: n (https://wordcounter.net)}
 
