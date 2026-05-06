@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.5.5)  6 MAY 2026 11:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.5.5)  6 MAY 2026 11:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -593,56 +593,53 @@ Package pdftex.def Info: project/figures/fluorescence.png  used on input line 12
 File: project/figures/morphology/morphology_figure.png Graphic file (type png)
 <use project/figures/morphology/morphology_figure.png>
 Package pdftex.def Info: project/figures/morphology/morphology_figure.png  used on input line 132.
-(pdftex.def)             Requested size: 352.31625pt x 460.60625pt.
-[3{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc} <./project/figures/fluorescence.png>] [4 <./project/figures/morphology/morphology_figure.png>]
-<project/figures/movement/movement_figure.png, id=45, 481.3182pt x 655.9707pt>
+(pdftex.def)             Requested size: 234.8775pt x 307.05986pt.
+[3{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc} <./project/figures/fluorescence.png>]
+<project/figures/movement/movement_figure.png, id=38, 481.3182pt x 655.9707pt>
 File: project/figures/movement/movement_figure.png Graphic file (type png)
 <use project/figures/movement/movement_figure.png>
-Package pdftex.def Info: project/figures/movement/movement_figure.png  used on input line 142.
-(pdftex.def)             Requested size: 352.31625pt x 480.15584pt.
-[5] [6 <./project/figures/movement/movement_figure.png>]
-<project/figures/lmm_results_plot.png, id=57, 433.62pt x 289.08pt>
+Package pdftex.def Info: project/figures/movement/movement_figure.png  used on input line 140.
+(pdftex.def)             Requested size: 234.8775pt x 320.10722pt.
+[4 <./project/figures/morphology/morphology_figure.png>]
+<project/figures/lmm_results_plot.png, id=47, 433.62pt x 289.08pt>
 File: project/figures/lmm_results_plot.png Graphic file (type png)
 <use project/figures/lmm_results_plot.png>
-Package pdftex.def Info: project/figures/lmm_results_plot.png  used on input line 152.
+Package pdftex.def Info: project/figures/lmm_results_plot.png  used on input line 150.
 (pdftex.def)             Requested size: 352.31625pt x 234.89014pt.
+[5 <./project/figures/movement/movement_figure.png>]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 182.
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 182.
+(Font)              <9> on input line 180.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 180.
 (/Users/jacobpollard/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[7 <./project/figures/lmm_results_plot.png>]
-<project/figures/PCA/PCA_figure.png, id=66, 722.7pt x 350.2686pt>
+) [6{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc} <./project/figures/lmm_results_plot.png>]
+<project/figures/PCA/PCA_figure.png, id=65, 722.7pt x 350.2686pt>
 File: project/figures/PCA/PCA_figure.png Graphic file (type png)
 <use project/figures/PCA/PCA_figure.png>
-Package pdftex.def Info: project/figures/PCA/PCA_figure.png  used on input line 192.
+Package pdftex.def Info: project/figures/PCA/PCA_figure.png  used on input line 190.
 (pdftex.def)             Requested size: 352.31625pt x 170.75659pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[8{/Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc} <./project/figures/PCA/PCA_figure.png>] [9] [10] [11] [12] (./Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.aux)
+[7 <./project/figures/PCA/PCA_figure.png>] [8] [9] [10] (./Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 14400 strings out of 469339
- 232697 string characters out of 5465139
- 667066 words of memory out of 5000000
+ 14398 strings out of 469339
+ 232683 string characters out of 5465139
+ 663065 words of memory out of 5000000
  42942 multiletter control sequences out of 15000+600000
  692778 words of font info for 90 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 89i,11n,93p,2048b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 89i,11n,93p,2048b,475s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri9.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/jacobpollard/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.pdf (12 pages, 5604352 bytes).
+Output written on Morphokinetic-properties-of-mesenchymal-stem-cells-as-a-predictor-of-differentiation-potential.pdf (10 pages, 5603722 bytes).
 PDF statistics:
- 242 PDF objects out of 1000 (max. 8388607)
- 187 compressed objects within 2 object streams
- 32 named destinations out of 1000 (max. 500000)
+ 233 PDF objects out of 1000 (max. 8388607)
+ 180 compressed objects within 2 object streams
+ 30 named destinations out of 1000 (max. 500000)
  122 words of extra memory for PDF output out of 10000 (max. 10000000)
 
